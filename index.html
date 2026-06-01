@@ -512,6 +512,7 @@
           "Reward shaping around queue length, waiting time and throughput"
         ],
         tags: ["MAPPO", "CTDE", "PyTorch", "SUMO", "Python", "Reinforcement Learning"],
+        team: null,
         images: [
           "https://raw.githubusercontent.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor/main/SPPO_model/results/metric_throughput_20251121_214524.png",
           "https://raw.githubusercontent.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor/main/SPPO_model/results/metric_queue_20251121_214524.png",
@@ -530,6 +531,7 @@
           "Designed for wireless sensor network data collection"
         ],
         tags: ["STM32F401RE", "LoRa", "PCB", "Proteus 8", "Embedded"],
+        team: null,
         images: [
           "https://raw.githubusercontent.com/geranimoekia/WSN_READER_PCB_DESIGN/master/exports/WSN%20READER%20PCB.SVG",
           "https://raw.githubusercontent.com/geranimoekia/WSN_READER_PCB_DESIGN/master/exports/WSN%20READER%20PCB%20(1).SVG",
@@ -548,7 +550,8 @@
           "Runs on Arduino hardware with a live Python Dash dashboard",
           "Demonstrates the throughput vs. robustness trade-off live"
         ],
-        tags: ["Arduino", "BPSK/QPSK/16QAM", "FEC", "BER", "Python Dash"]
+        tags: ["Arduino", "BPSK/QPSK/16QAM", "FEC", "BER", "Python Dash"],
+        team: 5
       },
       "District-Telehealth-And-Emergency-Communication-Network": {
         cat: "Networks / Simulation",
@@ -562,6 +565,7 @@
           "Interactive Streamlit dashboard for exploring the network"
         ],
         tags: ["QoS", "Network Simulation", "Streamlit", "Python", "Forecasting"],
+        team: 5,
         images: [
           "https://raw.githubusercontent.com/geranimoekia/District-Telehealth-And-Emergency-Communication-Network/main/figures/topology.png",
           "https://raw.githubusercontent.com/geranimoekia/District-Telehealth-And-Emergency-Communication-Network/main/figures/coverage.png",
@@ -581,6 +585,7 @@
           "Designed around real polling-station constraints"
         ],
         tags: ["PIC16F877A", "Embedded C", "Keypad", "LCD"],
+        team: 2,
         images: [
           "https://raw.githubusercontent.com/geranimoekia/Digital-Voting-System/master/images/fig05_simulation_diagram.jpeg",
           "https://raw.githubusercontent.com/geranimoekia/Digital-Voting-System/master/images/fig01_pic16f877a_pinout.png",
@@ -599,6 +604,7 @@
           "LaTeX source and circuit figures included"
         ],
         tags: ["Proximity Sensors", "Assistive Tech", "Research", "LaTeX"],
+        team: null,
         images: [
           "https://raw.githubusercontent.com/geranimoekia/Aiding-System-For-Visually-Impaired-Individuals/master/paper/figures/fig01_block_diagram.png",
           "https://raw.githubusercontent.com/geranimoekia/Aiding-System-For-Visually-Impaired-Individuals/master/paper/figures/fig02_flowchart.png",
@@ -616,7 +622,8 @@
           "Brings scattered listings into a single view",
           "Built in Python with web-scraping automation"
         ],
-        tags: ["Python", "Web Scraping", "Automation", "Facebook"]
+        tags: ["Python", "Web Scraping", "Automation", "Facebook"],
+        team: null
       }
     };
 
@@ -630,8 +637,13 @@
       $('modalGallery').innerHTML = (d.images || []).map(src =>
         '<a href="' + src + '" target="_blank" rel="noopener"><img loading="lazy" src="' + src + '" alt="' + d.title + ' image"></a>').join('');
       const roleEl = $('modalRole');
-      if (d.role) {
-        roleEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span><strong>My role:</strong> ' + d.role + '</span>';
+      const teamIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
+      const soloIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>';
+      if (d.team) {
+        roleEl.innerHTML = teamIcon + '<span><strong>Team project</strong>, ' + d.team + ' members. Demonstrates cross-functional collaboration and shared delivery.</span>';
+        roleEl.classList.add('show');
+      } else if (d.team === null) {
+        roleEl.innerHTML = soloIcon + '<span><strong>Solo project</strong>, designed, built and delivered end to end.</span>';
         roleEl.classList.add('show');
       } else {
         roleEl.classList.remove('show');
@@ -664,6 +676,13 @@
         cover.innerHTML = '<span>' + ((d.cat || 'Project').split('/')[0].trim()) + '</span>';
       }
       card.insertBefore(cover, card.firstChild);
+      const pill = card.querySelector('.pill');
+      if (pill && d.team !== undefined) {
+        const badge = document.createElement('span');
+        badge.className = 'team-badge';
+        badge.textContent = d.team ? 'Team ' + d.team : 'Solo';
+        pill.parentNode.insertBefore(badge, pill.nextSibling);
+      }
       card.title = 'Click for details';
       card.addEventListener('click', () => openModal(key, repo));
       if (link) link.addEventListener('click', (e) => e.stopPropagation());
