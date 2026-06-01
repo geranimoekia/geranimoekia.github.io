@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tsotlhe Seiphepi — Computer &amp; Telecommunications Engineer</title>
-<meta name="description" content="Portfolio of Tsotlhe Seiphepi — Computer & Telecommunications Engineer. AI, embedded systems, networks, and IoT projects." />
+<title>Tsotlhe Seiphepi | Computer &amp; Telecommunications Engineer</title>
+<meta name="description" content="Portfolio of Tsotlhe Seiphepi, Computer & Telecommunications Engineer. AI, embedded systems, networks, and IoT projects." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -228,6 +228,29 @@
   .modal-foot { display: flex; gap: 10px; flex-wrap: wrap; padding: 16px 28px; border-top: 1px solid var(--line-2); position: sticky; bottom: 0; background: #fff; }
   body.modal-open { overflow: hidden; }
 
+  /* card cover image */
+  .card-cover { margin: -24px -24px 18px; height: 152px; overflow: hidden; border-bottom: 1px solid var(--line-2); position: relative; }
+  .card-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .35s ease; background: #fff; }
+  .card:hover .card-cover img { transform: scale(1.05); }
+  .card-cover.placeholder { display: grid; place-items: center; background: linear-gradient(135deg, #eef4ff, #f7f8fa); }
+  .card-cover.placeholder span { font-family: var(--mono); font-size: .82rem; color: var(--accent); letter-spacing: .04em; }
+
+  /* modal image gallery */
+  .modal-gallery { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin: 16px 0 2px; }
+  .modal-gallery:empty { display: none; }
+  .modal-gallery a { display: block; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: #fff; aspect-ratio: 4 / 3; }
+  .modal-gallery img { width: 100%; height: 100%; object-fit: contain; display: block; transition: transform .25s ease; padding: 4px; }
+  .modal-gallery a:hover img { transform: scale(1.05); }
+
+  /* modal role / collaboration */
+  .modal-role { display: none; gap: 10px; align-items: flex-start; background: var(--accent-soft); border: 1px solid #dbe6ff; border-radius: 12px; padding: 12px 14px; margin: 16px 0 2px; font-size: .92rem; color: var(--ink-2); }
+  .modal-role.show { display: flex; }
+  .modal-role strong { color: var(--ink); }
+  .modal-role svg { width: 17px; height: 17px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
+
+  /* card team badge */
+  .team-badge { font-family: var(--mono); font-size: .68rem; font-weight: 500; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line); color: var(--muted); background: #fff; }
+
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
     .reveal { opacity: 1; transform: none; }
@@ -250,11 +273,12 @@
 
   <header>
     <div class="wrap">
-      <div class="status"><span class="dot"></span> Available for full-time roles · 2026</div>
+      <div class="status"><span class="dot"></span> Open to full-time engineering roles</div>
       <h1>Computer &amp; Telecom Engineer<br />building <span class="accent">intelligent systems.</span></h1>
       <p class="lede">
-        Final-year BEng at <strong>BIUST, Botswana</strong>, working across AI &amp; reinforcement learning,
-        embedded hardware, and communication networks. I turn hard engineering problems into systems that run.
+        I work across <strong>AI &amp; reinforcement learning</strong>, <strong>embedded hardware</strong>,
+        and <strong>communication networks</strong>, turning hard engineering problems into systems that run.
+        BEng, Computer &amp; Telecommunications Engineering, BIUST (Botswana).
       </p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#projects">View Projects →</a>
@@ -267,7 +291,7 @@
         <div class="stat"><div class="num"><span class="count" data-to="7" data-suffix="+">0</span></div><div class="lbl">Engineering projects</div></div>
         <div class="stat"><div class="num"><span class="count" data-to="4.0" data-dec="1">0</span><span style="color:var(--muted);font-size:1rem;font-weight:600;">/5.0</span></div><div class="lbl">CGPA</div></div>
         <div class="stat"><div class="num"><span class="count" data-to="3">0</span></div><div class="lbl">Domains · AI · HW · Networks</div></div>
-        <div class="stat"><div class="num"><span class="count" data-to="2026">0</span></div><div class="lbl">Graduating, BEng</div></div>
+        <div class="stat"><div class="num">BEng</div><div class="lbl">Computer &amp; Telecom Eng · BIUST</div></div>
       </div>
     </div>
   </header>
@@ -286,7 +310,7 @@
         <article class="card reveal">
           <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="20" rx="3"/><circle cx="12" cy="7" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="17" r="1.2"/></svg></span><span class="pill">AI / RL</span></div>
           <h3>Multi-Agent RL for Adaptive Traffic Signal Control</h3>
-          <p>MAPPO (Multi-Agent PPO) controlling the Palapye triple-intersection network using a CTDE architecture — 3 cooperative agents, curriculum learning, and full SUMO simulation.</p>
+          <p>MAPPO (Multi-Agent PPO) controlling the Palapye triple-intersection network using a CTDE architecture, with 3 cooperative agents, curriculum learning, and full SUMO simulation.</p>
           <div class="tags"><span class="tag">MAPPO</span><span class="tag">CTDE</span><span class="tag">SUMO</span><span class="tag">PyTorch</span></div>
           <div class="card-foot">
             <span class="lang"><span class="swatch" style="background:#3572A5"></span>Python</span>
@@ -311,7 +335,7 @@
         <article class="card reveal">
           <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3l3-8 4 16 3-8h7"/></svg></span><span class="pill">Comms / DSP</span></div>
           <h3>Adaptive Digital Communication System</h3>
-          <p>Real-time adaptive wireless link simulating BER optimization, FEC, and BPSK/QPSK/16QAM modulation switching on Arduino — with a live Python Dash dashboard.</p>
+          <p>Real-time adaptive wireless link simulating BER optimization, FEC, and BPSK/QPSK/16QAM modulation switching on Arduino, with a live Python Dash dashboard.</p>
           <div class="tags"><span class="tag">Arduino</span><span class="tag">BPSK/QPSK/16QAM</span><span class="tag">FEC</span><span class="tag">Dash</span></div>
           <div class="card-foot">
             <span class="lang"><span class="swatch" style="background:#3572A5"></span>Python</span>
@@ -348,7 +372,7 @@
         <article class="card reveal">
           <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="1.6"/><path d="M5 8h14M12 8v6M12 14l-3 7M12 14l3 7"/></svg></span><span class="pill">Research</span></div>
           <h3>Aiding System for the Visually Impaired</h3>
-          <p>Enhanced mobility device using proximity-sensor technology — full research paper, LaTeX source, and circuit figures documenting the design.</p>
+          <p>Enhanced mobility device using proximity-sensor technology, with a full research paper, LaTeX source, and circuit figures documenting the design.</p>
           <div class="tags"><span class="tag">Proximity Sensors</span><span class="tag">Research</span><span class="tag">LaTeX</span></div>
           <div class="card-foot">
             <span class="lang"><span class="swatch" style="background:#3D6117"></span>Research</span>
@@ -360,7 +384,7 @@
         <article class="card reveal">
           <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></span><span class="pill">Software</span></div>
           <h3>Find My Home</h3>
-          <p>Tool to find rental houses and flats across Botswana — scrapes Facebook Search and Marketplace to surface listings in one place.</p>
+          <p>Tool to find rental houses and flats across Botswana. It scrapes Facebook Search and Marketplace to surface listings in one place.</p>
           <div class="tags"><span class="tag">Python</span><span class="tag">Web Scraping</span><span class="tag">Automation</span></div>
           <div class="card-foot">
             <span class="lang"><span class="swatch" style="background:#3572A5"></span>Python</span>
@@ -378,8 +402,8 @@
         <div class="about reveal">
           <div class="sec-tag mono">// about</div>
           <h2>Engineer across the full stack of systems</h2>
-          <p>I'm a final-year <strong>BEng Computer &amp; Telecommunications Engineering</strong> student at the Botswana International University of Science &amp; Technology (BIUST), graduating September 2026 with a <strong>4.0/5.0 CGPA</strong>.</p>
-          <p>My work spans three worlds that most people keep separate: <strong>machine learning &amp; reinforcement learning</strong>, <strong>embedded hardware and PCB design</strong>, and <strong>communication networks</strong>. I like problems where those layers meet — adaptive systems, IoT, and infrastructure for the real world.</p>
+          <p>I'm a <strong>Computer &amp; Telecommunications Engineer</strong> trained at the Botswana International University of Science &amp; Technology (BIUST), holding a <strong>BEng</strong> with a <strong>4.0/5.0 CGPA</strong>.</p>
+          <p>My work spans three worlds that most people keep separate: <strong>machine learning &amp; reinforcement learning</strong>, <strong>embedded hardware and PCB design</strong>, and <strong>communication networks</strong>. I like problems where those layers meet, like adaptive systems, IoT, and infrastructure for the real world.</p>
           <p>I'm seeking full-time roles in <strong>solutions engineering, network engineering, or AI/IoT systems</strong> across Botswana and Southern Africa.</p>
         </div>
         <div class="skills-box reveal">
@@ -401,7 +425,7 @@
     <div class="wrap reveal">
       <div class="sec-tag mono">// get in touch</div>
       <h2>Let's build something <span class="accent">real.</span></h2>
-      <p>Open to engineering roles and collaborations. The fastest way to reach me is email — I reply quickly.</p>
+      <p>Open to engineering roles and collaborations. The fastest way to reach me is email, and I reply quickly.</p>
       <div class="cta-row" style="justify-content:center;">
         <a class="btn btn-primary" href="mailto:tsotlhenayangseiphepi@gmail.com">tsotlhenayangseiphepi@gmail.com</a>
         <a class="btn btn-ghost" href="https://github.com/geranimoekia" target="_blank" rel="noopener">GitHub</a>
@@ -426,6 +450,8 @@
       </div>
       <div class="modal-body">
         <p id="modalDesc"></p>
+        <div class="modal-gallery" id="modalGallery"></div>
+        <div class="modal-role" id="modalRole"></div>
         <h4>Highlights</h4>
         <ul class="modal-feats" id="modalFeats"></ul>
         <h4>Tech stack</h4>
@@ -485,19 +511,31 @@
           "Full microscopic traffic simulation in SUMO with realistic demand",
           "Reward shaping around queue length, waiting time and throughput"
         ],
-        tags: ["MAPPO", "CTDE", "PyTorch", "SUMO", "Python", "Reinforcement Learning"]
+        tags: ["MAPPO", "CTDE", "PyTorch", "SUMO", "Python", "Reinforcement Learning"],
+        images: [
+          "https://raw.githubusercontent.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor/main/SPPO_model/results/metric_throughput_20251121_214524.png",
+          "https://raw.githubusercontent.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor/main/SPPO_model/results/metric_queue_20251121_214524.png",
+          "https://raw.githubusercontent.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor/main/SPPO_model/results/metric_delay_20251121_214524.png",
+          "https://raw.githubusercontent.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor/main/SPPO_model/results/comparison_20251121_213355.png"
+        ]
       },
       "WSN_READER_PCB_DESIGN": {
         cat: "Hardware / PCB Design",
         title: "WSN Reader PCB Design",
-        desc: "A custom reader board for a Wireless Sensor Network node, built around the STM32F401RE with a LoRa radio for long-range, low-power links — designed and simulated end-to-end in Proteus.",
+        desc: "A custom reader board for a Wireless Sensor Network node, built around the STM32F401RE with a LoRa radio for long-range, low-power links, designed and simulated end-to-end in Proteus.",
         feats: [
           "STM32F401RE (ARM Cortex-M4) as the main controller",
           "LoRa transceiver for long-range, low-power wireless",
           "Schematic capture and PCB layout in Proteus 8 Professional",
           "Designed for wireless sensor network data collection"
         ],
-        tags: ["STM32F401RE", "LoRa", "PCB", "Proteus 8", "Embedded"]
+        tags: ["STM32F401RE", "LoRa", "PCB", "Proteus 8", "Embedded"],
+        images: [
+          "https://raw.githubusercontent.com/geranimoekia/WSN_READER_PCB_DESIGN/master/exports/WSN%20READER%20PCB.SVG",
+          "https://raw.githubusercontent.com/geranimoekia/WSN_READER_PCB_DESIGN/master/exports/WSN%20READER%20PCB%20(1).SVG",
+          "https://raw.githubusercontent.com/geranimoekia/WSN_READER_PCB_DESIGN/master/exports/WSN%20READER%20PCB%20(2).SVG",
+          "https://raw.githubusercontent.com/geranimoekia/WSN_READER_PCB_DESIGN/master/exports/WSN%20READER%20PCB%20(3).SVG"
+        ]
       },
       "Adaptive-Digital-Communication-System-With-BER-Optimization": {
         cat: "Communications / DSP",
@@ -523,7 +561,13 @@
           "Failure-scenario analysis for network resilience",
           "Interactive Streamlit dashboard for exploring the network"
         ],
-        tags: ["QoS", "Network Simulation", "Streamlit", "Python", "Forecasting"]
+        tags: ["QoS", "Network Simulation", "Streamlit", "Python", "Forecasting"],
+        images: [
+          "https://raw.githubusercontent.com/geranimoekia/District-Telehealth-And-Emergency-Communication-Network/main/figures/topology.png",
+          "https://raw.githubusercontent.com/geranimoekia/District-Telehealth-And-Emergency-Communication-Network/main/figures/coverage.png",
+          "https://raw.githubusercontent.com/geranimoekia/District-Telehealth-And-Emergency-Communication-Network/main/figures/routing.png",
+          "https://raw.githubusercontent.com/geranimoekia/District-Telehealth-And-Emergency-Communication-Network/main/figures/interference_map.png"
+        ]
       },
       "Digital-Voting-System": {
         cat: "Embedded Systems",
@@ -536,19 +580,31 @@
           "Vote tallying logic in embedded C",
           "Designed around real polling-station constraints"
         ],
-        tags: ["PIC16F877A", "Embedded C", "Keypad", "LCD"]
+        tags: ["PIC16F877A", "Embedded C", "Keypad", "LCD"],
+        images: [
+          "https://raw.githubusercontent.com/geranimoekia/Digital-Voting-System/master/images/fig05_simulation_diagram.jpeg",
+          "https://raw.githubusercontent.com/geranimoekia/Digital-Voting-System/master/images/fig01_pic16f877a_pinout.png",
+          "https://raw.githubusercontent.com/geranimoekia/Digital-Voting-System/master/images/fig04_voting_system_flowchart.png",
+          "https://raw.githubusercontent.com/geranimoekia/Digital-Voting-System/master/images/fig07-1_initial_state_hardware.jpeg"
+        ]
       },
       "Aiding-System-For-Visually-Impaired-Individuals": {
         cat: "Research / Assistive Tech",
         title: "Aiding System for the Visually Impaired",
-        desc: "A research project on an enhanced mobility device for visually impaired users, using proximity-sensor technology to detect obstacles — documented as a full paper with circuit design.",
+        desc: "A research project on an enhanced mobility device for visually impaired users, using proximity-sensor technology to detect obstacles, documented as a full paper with circuit design.",
         feats: [
           "Proximity-sensor based obstacle detection for safer mobility",
           "Enhanced mobility device concept and prototype",
           "Full research paper with methodology and results",
           "LaTeX source and circuit figures included"
         ],
-        tags: ["Proximity Sensors", "Assistive Tech", "Research", "LaTeX"]
+        tags: ["Proximity Sensors", "Assistive Tech", "Research", "LaTeX"],
+        images: [
+          "https://raw.githubusercontent.com/geranimoekia/Aiding-System-For-Visually-Impaired-Individuals/master/paper/figures/fig01_block_diagram.png",
+          "https://raw.githubusercontent.com/geranimoekia/Aiding-System-For-Visually-Impaired-Individuals/master/paper/figures/fig02_flowchart.png",
+          "https://raw.githubusercontent.com/geranimoekia/Aiding-System-For-Visually-Impaired-Individuals/master/paper/figures/fig04b_sensory_circuit.png",
+          "https://raw.githubusercontent.com/geranimoekia/Aiding-System-For-Visually-Impaired-Individuals/master/paper/figures/fig07_oscilloscope_ne555.jpeg"
+        ]
       },
       "find-my-home": {
         cat: "Software / Automation",
@@ -571,6 +627,16 @@
       $('modalCat').textContent = '// ' + d.cat;
       $('modalTitle').textContent = d.title;
       $('modalDesc').textContent = d.desc;
+      $('modalGallery').innerHTML = (d.images || []).map(src =>
+        '<a href="' + src + '" target="_blank" rel="noopener"><img loading="lazy" src="' + src + '" alt="' + d.title + ' image"></a>').join('');
+      const roleEl = $('modalRole');
+      if (d.role) {
+        roleEl.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg><span><strong>My role:</strong> ' + d.role + '</span>';
+        roleEl.classList.add('show');
+      } else {
+        roleEl.classList.remove('show');
+        roleEl.innerHTML = '';
+      }
       $('modalFeats').innerHTML = d.feats.map(f => '<li>' + f + '</li>').join('');
       $('modalTags').innerHTML = d.tags.map(t => '<span class="tag">' + t + '</span>').join('');
       $('modalRepo').href = repo;
@@ -588,6 +654,16 @@
       const link = card.querySelector('.repo-link');
       const repo = link ? link.getAttribute('href') : '#';
       const key = repo.split('/').pop();
+      const d = details[key] || {};
+      const cover = document.createElement('div');
+      cover.className = 'card-cover';
+      if (d.images && d.images.length) {
+        cover.innerHTML = '<img loading="lazy" src="' + d.images[0] + '" alt="' + (d.title || '') + ' preview">';
+      } else {
+        cover.classList.add('placeholder');
+        cover.innerHTML = '<span>' + ((d.cat || 'Project').split('/')[0].trim()) + '</span>';
+      }
+      card.insertBefore(cover, card.firstChild);
       card.title = 'Click for details';
       card.addEventListener('click', () => openModal(key, repo));
       if (link) link.addEventListener('click', (e) => e.stopPropagation());
