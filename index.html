@@ -3,211 +3,271 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Tsotlhe Seiphepi — Engineer & Builder</title>
+<title>Tsotlhe Seiphepi — Computer &amp; Telecommunications Engineer</title>
 <meta name="description" content="Portfolio of Tsotlhe Seiphepi — Computer & Telecommunications Engineer. AI, embedded systems, networks, and IoT projects." />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
 <style>
   :root {
-    --bg: #0a0612;
-    --bg-2: #120a24;
-    --ink: #f4f0ff;
-    --muted: #a89cc9;
-    --c1: #ff2e88;   /* hot pink */
-    --c2: #7c3aed;   /* violet   */
-    --c3: #00e5ff;   /* cyan     */
-    --c4: #ffb800;   /* amber    */
-    --c5: #14f195;   /* green    */
-    --card: rgba(255,255,255,0.04);
-    --border: rgba(255,255,255,0.10);
-    --radius: 20px;
+    --bg: #ffffff;
+    --bg-soft: #f7f8fa;
+    --ink: #0b0f17;
+    --ink-2: #364152;
+    --muted: #697586;
+    --line: #e6e8ec;
+    --line-2: #eef0f3;
+    --accent: #2563eb;     /* blue */
+    --accent-soft: #eff4ff;
+    --accent-ink: #1d4ed8;
+    --radius: 14px;
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   html { scroll-behavior: smooth; }
 
   body {
-    font-family: 'Space Grotesk', system-ui, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
     background: var(--bg);
     color: var(--ink);
     line-height: 1.6;
-    overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
-  /* animated gradient mesh background */
-  .mesh {
-    position: fixed;
-    inset: 0;
-    z-index: -2;
-    background:
-      radial-gradient(40rem 40rem at 10% 0%, rgba(124,58,237,0.35), transparent 60%),
-      radial-gradient(35rem 35rem at 90% 10%, rgba(255,46,136,0.30), transparent 60%),
-      radial-gradient(45rem 45rem at 50% 100%, rgba(0,229,255,0.22), transparent 60%),
-      var(--bg);
-  }
-  .grain {
-    position: fixed; inset: 0; z-index: -1; opacity: 0.04; pointer-events: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+  .mono { font-family: var(--mono); }
 
   /* NAV */
   nav {
     position: sticky; top: 0; z-index: 50;
-    backdrop-filter: blur(14px);
-    background: rgba(10,6,18,0.55);
-    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.8);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--line);
   }
-  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-  .logo { font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em; }
-  .logo span { background: linear-gradient(90deg, var(--c1), var(--c3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .nav-links { display: flex; gap: 28px; }
-  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.95rem; font-weight: 500; transition: color .2s ease; }
-  .nav-links a:hover { color: var(--ink); }
-  @media (max-width: 640px){ .nav-links { display:none; } }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+  .logo { font-weight: 700; font-size: 1rem; letter-spacing: -0.01em; display: flex; align-items: center; gap: 9px; }
+  .logo .badge { width: 28px; height: 28px; border-radius: 8px; background: var(--ink); color: #fff; display: grid; place-items: center; font-size: 0.78rem; font-weight: 700; }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { color: var(--ink-2); text-decoration: none; font-size: 0.92rem; font-weight: 500; transition: color .15s ease; }
+  .nav-links a:hover { color: var(--accent); }
+  @media (max-width: 640px){ .nav-links a:not(.nav-cta){ display:none; } }
+  .nav-cta { background: var(--ink); color: #fff !important; padding: 8px 16px; border-radius: 9px; font-size: 0.88rem; }
+  .nav-cta:hover { background: var(--accent); }
 
   /* HERO */
-  header { padding: 110px 0 80px; position: relative; }
-  .eyebrow {
+  header { padding: 96px 0 64px; border-bottom: 1px solid var(--line-2); position: relative; }
+  header::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background-image: linear-gradient(var(--line-2) 1px, transparent 1px), linear-gradient(90deg, var(--line-2) 1px, transparent 1px);
+    background-size: 32px 32px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 30%, transparent 75%);
+    opacity: 0.6;
+  }
+  .status {
     display: inline-flex; align-items: center; gap: 8px;
-    font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;
-    color: var(--c5); border: 1px solid rgba(20,241,149,0.3);
-    background: rgba(20,241,149,0.06); padding: 6px 14px; border-radius: 999px;
-    margin-bottom: 26px;
+    font-family: var(--mono); font-size: 0.78rem; font-weight: 500;
+    color: var(--accent-ink); background: var(--accent-soft);
+    border: 1px solid #dbe6ff; padding: 6px 13px; border-radius: 999px; margin-bottom: 24px;
   }
-  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c5); box-shadow: 0 0 12px var(--c5); animation: pulse 2s infinite; }
-  @keyframes pulse { 0%,100%{ opacity:1 } 50%{ opacity:.3 } }
+  .status .dot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.15); }
 
-  h1 {
-    font-size: clamp(2.6rem, 7vw, 5rem);
-    line-height: 1.02; font-weight: 700; letter-spacing: -0.03em;
-    margin-bottom: 22px;
-  }
-  h1 .grad { background: linear-gradient(110deg, var(--c1), var(--c4) 45%, var(--c3)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .lede { font-size: clamp(1.05rem, 2.2vw, 1.35rem); color: var(--muted); max-width: 640px; margin-bottom: 38px; }
-  .lede strong { color: var(--ink); font-weight: 600; }
+  h1 { font-size: clamp(2.3rem, 6vw, 4.1rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.035em; margin-bottom: 20px; }
+  h1 .accent { color: var(--accent); }
+  .lede { font-size: clamp(1.02rem, 2vw, 1.22rem); color: var(--ink-2); max-width: 620px; margin-bottom: 32px; }
 
-  .cta-row { display: flex; flex-wrap: wrap; gap: 14px; }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
   .btn {
-    display: inline-flex; align-items: center; gap: 10px;
-    padding: 13px 24px; border-radius: 14px; font-weight: 600; font-size: 0.98rem;
-    text-decoration: none; border: 1px solid transparent; cursor: pointer;
-    transition: transform .18s ease, box-shadow .18s ease, background .2s ease;
+    display: inline-flex; align-items: center; gap: 9px;
+    padding: 11px 20px; border-radius: 11px; font-weight: 600; font-size: 0.94rem;
+    text-decoration: none; cursor: pointer; border: 1px solid transparent;
+    transition: transform .15s ease, box-shadow .15s ease, background .15s ease, border-color .15s ease, color .15s ease;
   }
-  .btn-primary { background: linear-gradient(100deg, var(--c1), var(--c2)); color: #fff; box-shadow: 0 8px 30px rgba(255,46,136,0.35); }
-  .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(255,46,136,0.5); }
-  .btn-ghost { background: var(--card); border-color: var(--border); color: var(--ink); }
-  .btn-ghost:hover { transform: translateY(-3px); border-color: var(--c3); color: var(--c3); }
+  .btn-primary { background: var(--ink); color: #fff; }
+  .btn-primary:hover { background: var(--accent); transform: translateY(-2px); box-shadow: 0 8px 22px rgba(37,99,235,0.25); }
+  .btn-ghost { background: #fff; border-color: var(--line); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 
-  /* STAT STRIP */
-  .stats { display: flex; flex-wrap: wrap; gap: 40px; margin-top: 60px; padding-top: 36px; border-top: 1px solid var(--border); }
-  .stat .num { font-size: 2rem; font-weight: 700; }
-  .stat .num.c1 { color: var(--c1); } .stat .num.c3 { color: var(--c3); } .stat .num.c4 { color: var(--c4); } .stat .num.c5 { color: var(--c5); }
-  .stat .lbl { color: var(--muted); font-size: 0.88rem; }
+  /* STATS */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; margin-top: 56px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+  @media (max-width: 620px){ .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat { background: #fff; padding: 22px 20px; }
+  .stat .num { font-size: 1.7rem; font-weight: 800; letter-spacing: -0.02em; }
+  .stat .lbl { color: var(--muted); font-size: 0.82rem; margin-top: 2px; }
 
   /* SECTION */
-  section { padding: 80px 0; }
-  .sec-head { margin-bottom: 48px; }
-  .sec-head h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -0.02em; margin-bottom: 12px; }
-  .sec-head p { color: var(--muted); max-width: 560px; }
-  .sec-tag { font-family: 'JetBrains Mono', monospace; color: var(--c3); font-size: 0.85rem; letter-spacing: 0.05em; }
+  section { padding: 76px 0; border-bottom: 1px solid var(--line-2); }
+  .sec-head { margin-bottom: 40px; }
+  .sec-tag { font-family: var(--mono); color: var(--accent); font-size: 0.8rem; font-weight: 500; letter-spacing: 0.02em; margin-bottom: 10px; }
+  .sec-head h2 { font-size: clamp(1.6rem, 3.5vw, 2.3rem); letter-spacing: -0.025em; font-weight: 800; margin-bottom: 10px; }
+  .sec-head p { color: var(--muted); max-width: 540px; }
 
   /* PROJECT GRID */
-  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 22px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 18px; }
   .card {
-    position: relative; background: var(--card); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 26px; overflow: hidden;
-    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
-    display: flex; flex-direction: column;
+    background: #fff; border: 1px solid var(--line); border-radius: var(--radius);
+    padding: 24px; display: flex; flex-direction: column; position: relative;
+    transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
   }
-  .card::before {
-    content: ""; position: absolute; inset: 0; border-radius: var(--radius);
-    padding: 1px; background: linear-gradient(135deg, var(--accent, var(--c2)), transparent 50%);
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor; mask-composite: exclude; opacity: 0; transition: opacity .25s ease;
-  }
-  .card:hover { transform: translateY(-6px); box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-  .card:hover::before { opacity: 1; }
-  .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
-  .icon { font-size: 1.9rem; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4)); }
-  .pill { font-family:'JetBrains Mono', monospace; font-size: 0.72rem; padding: 4px 10px; border-radius: 999px; background: rgba(255,255,255,0.06); color: var(--muted); border: 1px solid var(--border); }
-  .card h3 { font-size: 1.18rem; line-height: 1.3; margin-bottom: 10px; letter-spacing: -0.01em; }
-  .card p { color: var(--muted); font-size: 0.92rem; flex-grow: 1; margin-bottom: 18px; }
-  .tags { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
-  .tag { font-family:'JetBrains Mono', monospace; font-size: 0.72rem; padding: 4px 9px; border-radius: 7px; background: var(--tagbg, rgba(124,58,237,0.14)); color: var(--tagc, #c9b6ff); }
-  .card-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border); }
-  .lang { display: flex; align-items: center; gap: 8px; font-size: 0.82rem; color: var(--muted); }
-  .lang .swatch { width: 10px; height: 10px; border-radius: 50%; }
-  .repo-link { color: var(--ink); text-decoration: none; font-size: 0.85rem; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; transition: gap .2s ease, color .2s ease; }
-  .repo-link:hover { gap: 11px; color: var(--c3); }
-  .stars { font-size: 0.82rem; color: var(--c4); display: inline-flex; align-items: center; gap: 4px; }
+  .card:hover { transform: translateY(-4px); box-shadow: 0 14px 34px rgba(11,15,23,0.08); border-color: #d4d8de; }
+  .card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .icon { width: 42px; height: 42px; border-radius: 11px; background: var(--bg-soft); border: 1px solid var(--line); display: grid; place-items: center; color: var(--accent); }
+  .icon svg { width: 21px; height: 21px; }
+  .pill { font-family: var(--mono); font-size: 0.7rem; font-weight: 500; padding: 4px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--accent-ink); }
+  .card h3 { font-size: 1.1rem; line-height: 1.32; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 9px; }
+  .card p { color: var(--ink-2); font-size: 0.9rem; flex-grow: 1; margin-bottom: 16px; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+  .tag { font-family: var(--mono); font-size: 0.7rem; padding: 3px 8px; border-radius: 6px; background: var(--bg-soft); color: var(--ink-2); border: 1px solid var(--line-2); }
+  .card-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 15px; border-top: 1px solid var(--line-2); }
+  .lang { display: flex; align-items: center; gap: 7px; font-size: 0.8rem; color: var(--muted); font-weight: 500; }
+  .lang .swatch { width: 9px; height: 9px; border-radius: 50%; }
+  .repo-link { color: var(--ink); text-decoration: none; font-size: 0.82rem; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: gap .15s ease, color .15s ease; }
+  .repo-link:hover { gap: 9px; color: var(--accent); }
+  .stars { font-size: 0.8rem; color: var(--muted); display: inline-flex; align-items: center; gap: 4px; font-weight: 500; }
 
   /* ABOUT */
-  .about-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 48px; align-items: start; }
-  @media (max-width: 760px){ .about-grid { grid-template-columns: 1fr; gap: 32px; } }
-  .about p { color: var(--muted); margin-bottom: 16px; font-size: 1.02rem; }
-  .about p strong { color: var(--ink); }
-  .skills-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; }
-  .skills-box h4 { font-family:'JetBrains Mono', monospace; font-size: 0.8rem; color: var(--c3); margin-bottom: 16px; letter-spacing: 0.05em; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip { font-size: 0.85rem; padding: 7px 13px; border-radius: 10px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--ink); transition: all .2s ease; }
-  .chip:hover { border-color: var(--c1); color: var(--c1); transform: translateY(-2px); }
+  .about-grid { display: grid; grid-template-columns: 1.35fr 1fr; gap: 44px; align-items: start; }
+  @media (max-width: 760px){ .about-grid { grid-template-columns: 1fr; gap: 30px; } }
+  .about h2 { font-size: clamp(1.6rem, 3.5vw, 2.2rem); letter-spacing: -0.025em; font-weight: 800; margin: 10px 0 20px; }
+  .about p { color: var(--ink-2); margin-bottom: 15px; font-size: 1rem; }
+  .about p strong { color: var(--ink); font-weight: 600; }
+  .skills-box { background: var(--bg-soft); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; }
+  .skills-box h4 { font-family: var(--mono); font-size: 0.78rem; color: var(--accent); margin-bottom: 15px; font-weight: 600; }
+  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
+  .chip { font-size: 0.83rem; padding: 6px 12px; border-radius: 8px; background: #fff; border: 1px solid var(--line); color: var(--ink-2); transition: all .15s ease; }
+  .chip:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
 
   /* CONTACT */
-  .contact { text-align: center; }
-  .contact h2 { font-size: clamp(2rem, 5vw, 3.2rem); margin-bottom: 16px; letter-spacing: -0.02em; }
-  .contact h2 .grad { background: linear-gradient(110deg, var(--c3), var(--c1)); -webkit-background-clip: text; background-clip: text; color: transparent; }
-  .contact p { color: var(--muted); max-width: 480px; margin: 0 auto 34px; font-size: 1.05rem; }
+  .contact { text-align: center; border-bottom: none; }
+  .contact h2 { font-size: clamp(1.9rem, 4.5vw, 2.9rem); font-weight: 800; letter-spacing: -0.03em; margin-bottom: 14px; }
+  .contact h2 .accent { color: var(--accent); }
+  .contact p { color: var(--muted); max-width: 460px; margin: 0 auto 30px; font-size: 1.02rem; }
 
-  footer { padding: 50px 0 60px; border-top: 1px solid var(--border); text-align: center; color: var(--muted); font-size: 0.88rem; }
-  footer a { color: var(--c3); text-decoration: none; }
+  footer { padding: 36px 0 48px; text-align: center; color: var(--muted); font-size: 0.85rem; }
+  footer a { color: var(--ink); text-decoration: none; font-weight: 500; }
+  footer a:hover { color: var(--accent); }
 
   /* scroll reveal */
-  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .55s ease, transform .55s ease; }
   .reveal.in { opacity: 1; transform: none; }
+
+  /* ---- animations ---- */
+  @keyframes floatUp { from { opacity: 0; transform: translateY(18px); } to { opacity: 1; transform: none; } }
+  header .status { animation: floatUp .6s ease both; }
+  header h1     { animation: floatUp .7s ease .08s both; }
+  header .lede  { animation: floatUp .7s ease .18s both; }
+  header .cta-row { animation: floatUp .7s ease .28s both; }
+  header .stats { animation: floatUp .7s ease .38s both; }
+
+  /* drifting aurora behind hero */
+  header::after {
+    content: ""; position: absolute; z-index: -1; inset: -25% -10% auto -10%; height: 460px;
+    background:
+      radial-gradient(45% 55% at 22% 28%, rgba(37,99,235,0.11), transparent 70%),
+      radial-gradient(42% 52% at 78% 18%, rgba(6,182,212,0.10), transparent 70%);
+    filter: blur(18px); pointer-events: none;
+    animation: drift 16s ease-in-out infinite alternate;
+  }
+  @keyframes drift { from { transform: translate(-2.5%, 0) scale(1); } to { transform: translate(2.5%, 2%) scale(1.06); } }
+
+  /* animated gradient shimmer on accent words */
+  h1 .accent, .contact h2 .accent {
+    background: linear-gradient(100deg, #2563eb 0%, #06b6d4 50%, #2563eb 100%);
+    background-size: 220% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: shimmer 7s linear infinite;
+  }
+  @keyframes shimmer { to { background-position: -220% 0; } }
+
+  /* light shine-sweep across cards on hover */
+  .card { overflow: hidden; cursor: pointer; }
+  .card::after {
+    content: ""; position: absolute; top: 0; left: -75%; width: 55%; height: 100%;
+    background: linear-gradient(100deg, transparent, rgba(37,99,235,0.10), transparent);
+    transform: skewX(-18deg); transition: left .65s cubic-bezier(.2,.7,.3,1); pointer-events: none;
+  }
+  .card:hover::after { left: 140%; }
+
+  /* live status dot pulse */
+  .status .dot { animation: ping 2.2s ease-in-out infinite; }
+  @keyframes ping { 0%, 100% { box-shadow: 0 0 0 3px rgba(22,163,74,0.15); } 50% { box-shadow: 0 0 0 6px rgba(22,163,74,0.05); } }
+
+  /* ---- project detail modal ---- */
+  .modal-overlay {
+    position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 20px;
+    background: rgba(11,15,23,0.45); backdrop-filter: blur(5px);
+    opacity: 0; visibility: hidden; transition: opacity .25s ease, visibility .25s ease;
+  }
+  .modal-overlay.open { opacity: 1; visibility: visible; }
+  .modal {
+    position: relative; background: #fff; border: 1px solid var(--line); border-radius: 18px;
+    max-width: 600px; width: 100%; max-height: 88vh; overflow-y: auto;
+    box-shadow: 0 30px 80px rgba(11,15,23,0.28);
+    transform: translateY(20px) scale(.96); opacity: 0;
+    transition: transform .32s cubic-bezier(.2,.8,.3,1), opacity .3s ease;
+  }
+  .modal-overlay.open .modal { transform: none; opacity: 1; }
+  .modal-close {
+    position: absolute; top: 15px; right: 15px; width: 34px; height: 34px; border-radius: 9px;
+    border: 1px solid var(--line); background: #fff; cursor: pointer; display: grid; place-items: center;
+    color: var(--ink-2); font-size: 1rem; line-height: 1; transition: all .15s ease;
+  }
+  .modal-close:hover { color: var(--accent); border-color: var(--accent); }
+  .modal-head { padding: 28px 28px 0; }
+  .modal-eyebrow { font-size: .78rem; color: var(--accent); margin-bottom: 8px; }
+  .modal h3 { font-size: 1.42rem; letter-spacing: -.02em; font-weight: 800; line-height: 1.25; padding-right: 36px; }
+  .modal-body { padding: 18px 28px 24px; }
+  .modal-body > p { color: var(--ink-2); margin-bottom: 4px; font-size: 1rem; }
+  .modal-body h4 { font-family: var(--mono); font-size: .74rem; color: var(--muted); margin: 22px 0 11px; text-transform: uppercase; letter-spacing: .06em; }
+  .modal-feats { list-style: none; display: grid; gap: 9px; }
+  .modal-feats li { position: relative; padding-left: 22px; color: var(--ink-2); font-size: .94rem; }
+  .modal-feats li::before { content: ""; position: absolute; left: 3px; top: 8px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+  .modal-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .modal-foot { display: flex; gap: 10px; flex-wrap: wrap; padding: 16px 28px; border-top: 1px solid var(--line-2); position: sticky; bottom: 0; background: #fff; }
+  body.modal-open { overflow: hidden; }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
+    .reveal { opacity: 1; transform: none; }
+  }
 </style>
 </head>
 <body>
-  <div class="mesh"></div>
-  <div class="grain"></div>
 
   <nav>
     <div class="wrap">
-      <div class="logo"><span>TS.</span></div>
+      <div class="logo"><span class="badge">TS</span> Tsotlhe Seiphepi</div>
       <div class="nav-links">
         <a href="#projects">Projects</a>
         <a href="#about">About</a>
-        <a href="#contact">Contact</a>
-        <a href="https://github.com/geranimoekia" target="_blank" rel="noopener">GitHub ↗</a>
+        <a href="https://github.com/geranimoekia" target="_blank" rel="noopener">GitHub</a>
+        <a class="nav-cta" href="#contact">Contact</a>
       </div>
     </div>
   </nav>
 
   <header>
     <div class="wrap">
-      <div class="eyebrow"><span class="dot"></span> Available for full-time roles · 2026</div>
-      <h1>Tsotlhe Seiphepi<br /><span class="grad">builds intelligent systems.</span></h1>
+      <div class="status"><span class="dot"></span> Available for full-time roles · 2026</div>
+      <h1>Computer &amp; Telecom Engineer<br />building <span class="accent">intelligent systems.</span></h1>
       <p class="lede">
-        Computer &amp; Telecommunications Engineer from <strong>BIUST, Botswana</strong>.
-        I work across <strong>AI &amp; reinforcement learning</strong>, <strong>embedded hardware</strong>,
-        and <strong>communication networks</strong> — turning hard problems into working systems.
+        Final-year BEng at <strong>BIUST, Botswana</strong>, working across AI &amp; reinforcement learning,
+        embedded hardware, and communication networks. I turn hard engineering problems into systems that run.
       </p>
       <div class="cta-row">
         <a class="btn btn-primary" href="#projects">View Projects →</a>
-        <a class="btn btn-ghost" href="https://github.com/geranimoekia" target="_blank" rel="noopener">⌨ GitHub</a>
-        <a class="btn btn-ghost" href="https://linkedin.com/in/tsotlhe-seiphepi-b7b5b6209" target="_blank" rel="noopener">in LinkedIn</a>
-        <a class="btn btn-ghost" href="mailto:tsotlhenayangseiphepi@gmail.com">✉ Email</a>
+        <a class="btn btn-ghost" href="https://github.com/geranimoekia" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-ghost" href="https://linkedin.com/in/tsotlhe-seiphepi-b7b5b6209" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn btn-ghost" href="mailto:tsotlhenayangseiphepi@gmail.com">Email</a>
       </div>
 
       <div class="stats">
-        <div class="stat"><div class="num c1">7+</div><div class="lbl">Engineering projects</div></div>
-        <div class="stat"><div class="num c3">4.0</div><div class="lbl">CGPA / 5.0</div></div>
-        <div class="stat"><div class="num c4">3</div><div class="lbl">Domains: AI · HW · Networks</div></div>
-        <div class="stat"><div class="num c5">2026</div><div class="lbl">Graduating, BEng</div></div>
+        <div class="stat"><div class="num"><span class="count" data-to="7" data-suffix="+">0</span></div><div class="lbl">Engineering projects</div></div>
+        <div class="stat"><div class="num"><span class="count" data-to="4.0" data-dec="1">0</span><span style="color:var(--muted);font-size:1rem;font-weight:600;">/5.0</span></div><div class="lbl">CGPA</div></div>
+        <div class="stat"><div class="num"><span class="count" data-to="3">0</span></div><div class="lbl">Domains · AI · HW · Networks</div></div>
+        <div class="stat"><div class="num"><span class="count" data-to="2026">0</span></div><div class="lbl">Graduating, BEng</div></div>
       </div>
     </div>
   </header>
@@ -215,7 +275,7 @@
   <section id="projects">
     <div class="wrap">
       <div class="sec-head reveal">
-        <div class="sec-tag">// selected work</div>
+        <div class="sec-tag mono">// selected work</div>
         <h2>Featured Projects</h2>
         <p>From multi-agent reinforcement learning to custom PCBs and QoS-aware network simulation. Each links to its full repository.</p>
       </div>
@@ -223,70 +283,49 @@
       <div class="grid">
 
         <!-- 1 -->
-        <article class="card reveal" style="--accent: var(--c1); --tagbg: rgba(255,46,136,0.14); --tagc:#ffb3d4;">
-          <div class="card-top">
-            <span class="icon">🚦</span>
-            <span class="pill">AI / RL</span>
-          </div>
+        <article class="card reveal">
+          <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="2" width="8" height="20" rx="3"/><circle cx="12" cy="7" r="1.2"/><circle cx="12" cy="12" r="1.2"/><circle cx="12" cy="17" r="1.2"/></svg></span><span class="pill">AI / RL</span></div>
           <h3>Multi-Agent RL for Adaptive Traffic Signal Control</h3>
           <p>MAPPO (Multi-Agent PPO) controlling the Palapye triple-intersection network using a CTDE architecture — 3 cooperative agents, curriculum learning, and full SUMO simulation.</p>
-          <div class="tags">
-            <span class="tag">MAPPO</span><span class="tag">CTDE</span><span class="tag">SUMO</span><span class="tag">PyTorch</span><span class="tag">Python</span>
-          </div>
+          <div class="tags"><span class="tag">MAPPO</span><span class="tag">CTDE</span><span class="tag">SUMO</span><span class="tag">PyTorch</span></div>
           <div class="card-foot">
             <span class="lang"><span class="swatch" style="background:#3572A5"></span>Python</span>
-            <a class="repo-link" href="https://github.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor" target="_blank" rel="noopener">Repo →</a>
+            <span style="display:flex;gap:12px;align-items:center;"><span class="stars"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-1px"><path d="M12 2l2.9 6.2 6.6.7-4.9 4.5 1.3 6.5L12 17.8 6 20.4l1.3-6.5L2.4 8.9l6.6-.7z"/></svg> 2</span>
+            <a class="repo-link" href="https://github.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor" target="_blank" rel="noopener">Repo →</a></span>
           </div>
         </article>
 
         <!-- 2 -->
-        <article class="card reveal" style="--accent: var(--c3); --tagbg: rgba(0,229,255,0.12); --tagc:#aef2ff;">
-          <div class="card-top">
-            <span class="icon">📡</span>
-            <span class="pill">Hardware</span>
-          </div>
+        <article class="card reveal">
+          <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="7" width="10" height="10" rx="1.5"/><rect x="10" y="10" width="4" height="4" rx="0.5"/><path d="M10 2v3M14 2v3M10 19v3M14 19v3M2 10h3M2 14h3M19 10h3M19 14h3"/></svg></span><span class="pill">Hardware</span></div>
           <h3>WSN Reader PCB Design</h3>
           <p>Wireless Sensor Network reader board built around the STM32F401RE + LoRa, fully designed and simulated in Proteus 8 Professional.</p>
-          <div class="tags">
-            <span class="tag">STM32F401RE</span><span class="tag">LoRa</span><span class="tag">PCB</span><span class="tag">Proteus 8</span>
-          </div>
+          <div class="tags"><span class="tag">STM32F401RE</span><span class="tag">LoRa</span><span class="tag">PCB</span><span class="tag">Proteus 8</span></div>
           <div class="card-foot">
-            <span class="lang"><span class="swatch" style="background:#00e5ff"></span>Embedded</span>
+            <span class="lang"><span class="swatch" style="background:#6e7681"></span>Embedded</span>
             <a class="repo-link" href="https://github.com/geranimoekia/WSN_READER_PCB_DESIGN" target="_blank" rel="noopener">Repo →</a>
           </div>
         </article>
 
         <!-- 3 -->
-        <article class="card reveal" style="--accent: var(--c4); --tagbg: rgba(255,184,0,0.14); --tagc:#ffe08a;">
-          <div class="card-top">
-            <span class="icon">📶</span>
-            <span class="pill">Comms / DSP</span>
-          </div>
+        <article class="card reveal">
+          <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h3l3-8 4 16 3-8h7"/></svg></span><span class="pill">Comms / DSP</span></div>
           <h3>Adaptive Digital Communication System</h3>
           <p>Real-time adaptive wireless link simulating BER optimization, FEC, and BPSK/QPSK/16QAM modulation switching on Arduino — with a live Python Dash dashboard.</p>
-          <div class="tags">
-            <span class="tag">Arduino</span><span class="tag">BPSK/QPSK/16QAM</span><span class="tag">FEC</span><span class="tag">Dash</span>
-          </div>
+          <div class="tags"><span class="tag">Arduino</span><span class="tag">BPSK/QPSK/16QAM</span><span class="tag">FEC</span><span class="tag">Dash</span></div>
           <div class="card-foot">
             <span class="lang"><span class="swatch" style="background:#3572A5"></span>Python</span>
-            <span style="display:flex;gap:12px;align-items:center;">
-              <span class="stars">★ 1</span>
-              <a class="repo-link" href="https://github.com/geranimoekia/Adaptive-Digital-Communication-System-With-BER-Optimization" target="_blank" rel="noopener">Repo →</a>
-            </span>
+            <span style="display:flex;gap:12px;align-items:center;"><span class="stars"><svg viewBox="0 0 24 24" width="12" height="12" fill="currentColor" style="vertical-align:-1px"><path d="M12 2l2.9 6.2 6.6.7-4.9 4.5 1.3 6.5L12 17.8 6 20.4l1.3-6.5L2.4 8.9l6.6-.7z"/></svg> 1</span>
+            <a class="repo-link" href="https://github.com/geranimoekia/Adaptive-Digital-Communication-System-With-BER-Optimization" target="_blank" rel="noopener">Repo →</a></span>
           </div>
         </article>
 
         <!-- 4 -->
-        <article class="card reveal" style="--accent: var(--c5); --tagbg: rgba(20,241,149,0.12); --tagc:#a6ffd9;">
-          <div class="card-top">
-            <span class="icon">🏥</span>
-            <span class="pill">Networks</span>
-          </div>
+        <article class="card reveal">
+          <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="5" cy="6" r="2"/><circle cx="19" cy="6" r="2"/><circle cx="12" cy="18" r="2.2"/><path d="M6.6 7.4 10.6 16M17.4 7.4 13.4 16M7 6h10"/></svg></span><span class="pill">Networks</span></div>
           <h3>District Telehealth &amp; Emergency Network</h3>
           <p>QoS-aware network simulation + Streamlit dashboard connecting clinics and hospitals across Palapye and Serowe. Models coverage, backhaul, QoS, traffic forecasting, and failure scenarios.</p>
-          <div class="tags">
-            <span class="tag">QoS</span><span class="tag">Network Sim</span><span class="tag">Streamlit</span><span class="tag">Python</span>
-          </div>
+          <div class="tags"><span class="tag">QoS</span><span class="tag">Network Sim</span><span class="tag">Streamlit</span></div>
           <div class="card-foot">
             <span class="lang"><span class="swatch" style="background:#3572A5"></span>Python</span>
             <a class="repo-link" href="https://github.com/geranimoekia/District-Telehealth-And-Emergency-Communication-Network" target="_blank" rel="noopener">Repo →</a>
@@ -294,33 +333,23 @@
         </article>
 
         <!-- 5 -->
-        <article class="card reveal" style="--accent: var(--c2); --tagbg: rgba(124,58,237,0.16); --tagc:#d4c2ff;">
-          <div class="card-top">
-            <span class="icon">🗳️</span>
-            <span class="pill">Embedded</span>
-          </div>
+        <article class="card reveal">
+          <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 12l3 3 5-6"/></svg></span><span class="pill">Embedded</span></div>
           <h3>Digital Voting System</h3>
           <p>PIC16F877A-based secure voting system with PIN authentication, a 4×4 keypad, and LCD display. Built for CTEN 415 Microcontrollers at BIUST.</p>
-          <div class="tags">
-            <span class="tag">PIC16F877A</span><span class="tag">Embedded C</span><span class="tag">Keypad</span><span class="tag">LCD</span>
-          </div>
+          <div class="tags"><span class="tag">PIC16F877A</span><span class="tag">Embedded C</span><span class="tag">Keypad</span><span class="tag">LCD</span></div>
           <div class="card-foot">
-            <span class="lang"><span class="swatch" style="background:#8a4b08"></span>Embedded</span>
+            <span class="lang"><span class="swatch" style="background:#6e7681"></span>Embedded</span>
             <a class="repo-link" href="https://github.com/geranimoekia/Digital-Voting-System" target="_blank" rel="noopener">Repo →</a>
           </div>
         </article>
 
         <!-- 6 -->
-        <article class="card reveal" style="--accent: var(--c1); --tagbg: rgba(255,46,136,0.14); --tagc:#ffb3d4;">
-          <div class="card-top">
-            <span class="icon">🦯</span>
-            <span class="pill">Research</span>
-          </div>
+        <article class="card reveal">
+          <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4" r="1.6"/><path d="M5 8h14M12 8v6M12 14l-3 7M12 14l3 7"/></svg></span><span class="pill">Research</span></div>
           <h3>Aiding System for the Visually Impaired</h3>
           <p>Enhanced mobility device using proximity-sensor technology — full research paper, LaTeX source, and circuit figures documenting the design.</p>
-          <div class="tags">
-            <span class="tag">Proximity Sensors</span><span class="tag">Research</span><span class="tag">LaTeX</span>
-          </div>
+          <div class="tags"><span class="tag">Proximity Sensors</span><span class="tag">Research</span><span class="tag">LaTeX</span></div>
           <div class="card-foot">
             <span class="lang"><span class="swatch" style="background:#3D6117"></span>Research</span>
             <a class="repo-link" href="https://github.com/geranimoekia/Aiding-System-For-Visually-Impaired-Individuals" target="_blank" rel="noopener">Repo →</a>
@@ -328,16 +357,11 @@
         </article>
 
         <!-- 7 -->
-        <article class="card reveal" style="--accent: var(--c3); --tagbg: rgba(0,229,255,0.12); --tagc:#aef2ff;">
-          <div class="card-top">
-            <span class="icon">🏠</span>
-            <span class="pill">Software</span>
-          </div>
+        <article class="card reveal">
+          <div class="card-top"><span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg></span><span class="pill">Software</span></div>
           <h3>Find My Home</h3>
           <p>Tool to find rental houses and flats across Botswana — scrapes Facebook Search and Marketplace to surface listings in one place.</p>
-          <div class="tags">
-            <span class="tag">Python</span><span class="tag">Web Scraping</span><span class="tag">Automation</span>
-          </div>
+          <div class="tags"><span class="tag">Python</span><span class="tag">Web Scraping</span><span class="tag">Automation</span></div>
           <div class="card-foot">
             <span class="lang"><span class="swatch" style="background:#3572A5"></span>Python</span>
             <a class="repo-link" href="https://github.com/geranimoekia/find-my-home" target="_blank" rel="noopener">Repo →</a>
@@ -352,14 +376,14 @@
     <div class="wrap">
       <div class="about-grid">
         <div class="about reveal">
-          <div class="sec-tag">// about</div>
-          <h2 style="font-size:clamp(1.8rem,4vw,2.6rem); margin:12px 0 22px; letter-spacing:-0.02em;">Engineer across the full stack of systems</h2>
+          <div class="sec-tag mono">// about</div>
+          <h2>Engineer across the full stack of systems</h2>
           <p>I'm a final-year <strong>BEng Computer &amp; Telecommunications Engineering</strong> student at the Botswana International University of Science &amp; Technology (BIUST), graduating September 2026 with a <strong>4.0/5.0 CGPA</strong>.</p>
           <p>My work spans three worlds that most people keep separate: <strong>machine learning &amp; reinforcement learning</strong>, <strong>embedded hardware and PCB design</strong>, and <strong>communication networks</strong>. I like problems where those layers meet — adaptive systems, IoT, and infrastructure for the real world.</p>
           <p>I'm seeking full-time roles in <strong>solutions engineering, network engineering, or AI/IoT systems</strong> across Botswana and Southern Africa.</p>
         </div>
         <div class="skills-box reveal">
-          <h4>// toolbox</h4>
+          <h4 class="mono">// toolbox</h4>
           <div class="chips">
             <span class="chip">Python</span><span class="chip">PyTorch</span><span class="chip">Reinforcement Learning</span>
             <span class="chip">SUMO</span><span class="chip">Embedded C</span><span class="chip">STM32</span>
@@ -375,34 +399,203 @@
 
   <section id="contact" class="contact">
     <div class="wrap reveal">
-      <div class="sec-tag">// get in touch</div>
-      <h2>Let's build something <span class="grad">real.</span></h2>
+      <div class="sec-tag mono">// get in touch</div>
+      <h2>Let's build something <span class="accent">real.</span></h2>
       <p>Open to engineering roles and collaborations. The fastest way to reach me is email — I reply quickly.</p>
       <div class="cta-row" style="justify-content:center;">
-        <a class="btn btn-primary" href="mailto:tsotlhenayangseiphepi@gmail.com">✉ tsotlhenayangseiphepi@gmail.com</a>
-        <a class="btn btn-ghost" href="https://github.com/geranimoekia" target="_blank" rel="noopener">⌨ GitHub</a>
-        <a class="btn btn-ghost" href="https://linkedin.com/in/tsotlhe-seiphepi-b7b5b6209" target="_blank" rel="noopener">in LinkedIn</a>
+        <a class="btn btn-primary" href="mailto:tsotlhenayangseiphepi@gmail.com">tsotlhenayangseiphepi@gmail.com</a>
+        <a class="btn btn-ghost" href="https://github.com/geranimoekia" target="_blank" rel="noopener">GitHub</a>
+        <a class="btn btn-ghost" href="https://linkedin.com/in/tsotlhe-seiphepi-b7b5b6209" target="_blank" rel="noopener">LinkedIn</a>
       </div>
     </div>
   </section>
 
   <footer>
     <div class="wrap">
-      <p>© <span id="yr"></span> Tsotlhe Seiphepi · Built with curiosity in Botswana 🇧🇼 · <a href="https://github.com/geranimoekia" target="_blank" rel="noopener">@geranimoekia</a></p>
+      <p>© <span id="yr"></span> Tsotlhe Seiphepi · Built in Botswana · <a href="https://github.com/geranimoekia" target="_blank" rel="noopener">@geranimoekia</a></p>
     </div>
   </footer>
 
+  <!-- project detail modal -->
+  <div class="modal-overlay" id="modal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" aria-label="Close">&#10005;</button>
+      <div class="modal-head">
+        <div class="modal-eyebrow mono" id="modalCat"></div>
+        <h3 id="modalTitle"></h3>
+      </div>
+      <div class="modal-body">
+        <p id="modalDesc"></p>
+        <h4>Highlights</h4>
+        <ul class="modal-feats" id="modalFeats"></ul>
+        <h4>Tech stack</h4>
+        <div class="modal-tags" id="modalTags"></div>
+      </div>
+      <div class="modal-foot">
+        <a class="btn btn-primary" id="modalRepo" target="_blank" rel="noopener">View Repository →</a>
+        <button class="btn btn-ghost" id="modalDismiss">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
+    const $ = (id) => document.getElementById(id);
 
     // scroll reveal
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
     }, { threshold: 0.12 });
     document.querySelectorAll('.reveal').forEach((el, i) => {
-      el.style.transitionDelay = (i % 3) * 80 + 'ms';
+      el.style.transitionDelay = (i % 3) * 70 + 'ms';
       io.observe(el);
     });
+
+    // count-up stats
+    const countObs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        const to = parseFloat(el.dataset.to);
+        const dec = parseInt(el.dataset.dec || '0', 10);
+        const suffix = el.dataset.suffix || '';
+        const dur = 1300, start = performance.now();
+        const step = (now) => {
+          const p = Math.min((now - start) / dur, 1);
+          const eased = 1 - Math.pow(1 - p, 3);
+          el.textContent = (to * eased).toFixed(dec) + (p === 1 ? suffix : '');
+          if (p < 1) requestAnimationFrame(step);
+        };
+        requestAnimationFrame(step);
+        countObs.unobserve(el);
+      });
+    }, { threshold: 0.6 });
+    document.querySelectorAll('.count').forEach(el => countObs.observe(el));
+
+    // ---- project detail modal ----
+    const details = {
+      "Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor": {
+        cat: "AI / Reinforcement Learning",
+        title: "Multi-Agent RL for Adaptive Traffic Signal Control",
+        desc: "A multi-agent deep reinforcement learning system that controls three coupled traffic signals along the Palapye A1 corridor, learning to cut congestion across the whole network rather than one intersection at a time.",
+        feats: [
+          "MAPPO (Multi-Agent PPO) with a Centralised Training, Decentralised Execution (CTDE) architecture",
+          "Three cooperative agents coordinating across a triple-intersection network",
+          "Curriculum learning to ramp difficulty and stabilise training",
+          "Full microscopic traffic simulation in SUMO with realistic demand",
+          "Reward shaping around queue length, waiting time and throughput"
+        ],
+        tags: ["MAPPO", "CTDE", "PyTorch", "SUMO", "Python", "Reinforcement Learning"]
+      },
+      "WSN_READER_PCB_DESIGN": {
+        cat: "Hardware / PCB Design",
+        title: "WSN Reader PCB Design",
+        desc: "A custom reader board for a Wireless Sensor Network node, built around the STM32F401RE with a LoRa radio for long-range, low-power links — designed and simulated end-to-end in Proteus.",
+        feats: [
+          "STM32F401RE (ARM Cortex-M4) as the main controller",
+          "LoRa transceiver for long-range, low-power wireless",
+          "Schematic capture and PCB layout in Proteus 8 Professional",
+          "Designed for wireless sensor network data collection"
+        ],
+        tags: ["STM32F401RE", "LoRa", "PCB", "Proteus 8", "Embedded"]
+      },
+      "Adaptive-Digital-Communication-System-With-BER-Optimization": {
+        cat: "Communications / DSP",
+        title: "Adaptive Digital Communication System",
+        desc: "A real-time adaptive wireless link that switches modulation schemes on the fly to optimise bit error rate as channel conditions change, with a live dashboard visualising performance.",
+        feats: [
+          "Adaptive switching between BPSK, QPSK and 16QAM based on channel quality",
+          "Forward Error Correction (FEC) to improve link reliability",
+          "Real-time Bit Error Rate (BER) optimisation",
+          "Runs on Arduino hardware with a live Python Dash dashboard",
+          "Demonstrates the throughput vs. robustness trade-off live"
+        ],
+        tags: ["Arduino", "BPSK/QPSK/16QAM", "FEC", "BER", "Python Dash"]
+      },
+      "District-Telehealth-And-Emergency-Communication-Network": {
+        cat: "Networks / Simulation",
+        title: "District Telehealth & Emergency Network",
+        desc: "A QoS-aware network design and simulation for a district telehealth and emergency communication system linking clinics and hospitals across Palapye and Serowe, Botswana.",
+        feats: [
+          "Models wireless coverage and backhaul links between facilities",
+          "Quality-of-Service (QoS) metrics for latency-sensitive medical traffic",
+          "Traffic forecasting and capacity planning",
+          "Failure-scenario analysis for network resilience",
+          "Interactive Streamlit dashboard for exploring the network"
+        ],
+        tags: ["QoS", "Network Simulation", "Streamlit", "Python", "Forecasting"]
+      },
+      "Digital-Voting-System": {
+        cat: "Embedded Systems",
+        title: "Digital Voting System",
+        desc: "A secure microcontroller-based digital voting terminal with PIN authentication, built for the CTEN 415 Microcontrollers course at BIUST.",
+        feats: [
+          "PIC16F877A microcontroller at its core",
+          "PIN-based voter authentication",
+          "4x4 matrix keypad input and LCD display interface",
+          "Vote tallying logic in embedded C",
+          "Designed around real polling-station constraints"
+        ],
+        tags: ["PIC16F877A", "Embedded C", "Keypad", "LCD"]
+      },
+      "Aiding-System-For-Visually-Impaired-Individuals": {
+        cat: "Research / Assistive Tech",
+        title: "Aiding System for the Visually Impaired",
+        desc: "A research project on an enhanced mobility device for visually impaired users, using proximity-sensor technology to detect obstacles — documented as a full paper with circuit design.",
+        feats: [
+          "Proximity-sensor based obstacle detection for safer mobility",
+          "Enhanced mobility device concept and prototype",
+          "Full research paper with methodology and results",
+          "LaTeX source and circuit figures included"
+        ],
+        tags: ["Proximity Sensors", "Assistive Tech", "Research", "LaTeX"]
+      },
+      "find-my-home": {
+        cat: "Software / Automation",
+        title: "Find My Home",
+        desc: "A practical tool that aggregates rental house and flat listings across Botswana by scraping Facebook Search and Marketplace into one searchable place.",
+        feats: [
+          "Scrapes Facebook Search and Marketplace for rentals",
+          "Focused on the Botswana housing market",
+          "Brings scattered listings into a single view",
+          "Built in Python with web-scraping automation"
+        ],
+        tags: ["Python", "Web Scraping", "Automation", "Facebook"]
+      }
+    };
+
+    const modal = $('modal');
+    function openModal(key, repo) {
+      const d = details[key];
+      if (!d) { window.open(repo, '_blank'); return; }
+      $('modalCat').textContent = '// ' + d.cat;
+      $('modalTitle').textContent = d.title;
+      $('modalDesc').textContent = d.desc;
+      $('modalFeats').innerHTML = d.feats.map(f => '<li>' + f + '</li>').join('');
+      $('modalTags').innerHTML = d.tags.map(t => '<span class="tag">' + t + '</span>').join('');
+      $('modalRepo').href = repo;
+      modal.classList.add('open');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('modal-open');
+    }
+    function closeModal() {
+      modal.classList.remove('open');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('modal-open');
+    }
+
+    document.querySelectorAll('.card').forEach(card => {
+      const link = card.querySelector('.repo-link');
+      const repo = link ? link.getAttribute('href') : '#';
+      const key = repo.split('/').pop();
+      card.title = 'Click for details';
+      card.addEventListener('click', () => openModal(key, repo));
+      if (link) link.addEventListener('click', (e) => e.stopPropagation());
+    });
+    $('modalClose').addEventListener('click', closeModal);
+    $('modalDismiss').addEventListener('click', closeModal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
   </script>
 </body>
 </html>
