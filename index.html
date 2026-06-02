@@ -262,37 +262,48 @@
     background: #0a0a0a; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
   }
-  #globe-canvas-wrap { position: absolute; inset: 0; }
+  #globe-canvas-wrap { position: absolute; inset: 0; transition: opacity .7s ease; }
   #globe-canvas-wrap canvas { display: block; }
-  #globe-hud {
-    position: absolute; bottom: 12%; left: 50%;
-    transform: translateX(-50%); text-align: center;
-    pointer-events: none; min-width: 240px;
+
+  /* quote screen */
+  #quote-screen {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; padding: 40px;
+    opacity: 0; pointer-events: none; transition: opacity .6s ease;
   }
-  #globe-locating {
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
-    transition: opacity .4s ease;
+  #quote-screen.show { opacity: 1; }
+  .qline {
+    opacity: 0; transform: translateY(22px);
+    transition: opacity .9s ease, transform .9s ease;
+    text-align: center; line-height: 1.25;
   }
-  .globe-dots { display: flex; gap: 8px; }
-  .globe-dots span {
-    width: 8px; height: 8px; border-radius: 50%; background: #fff;
-    animation: gdot .85s ease-in-out infinite alternate;
+  .qline.in { opacity: 1; transform: none; }
+  #ql1 {
+    font-size: clamp(1.5rem, 3.5vw, 2.6rem); font-weight: 800;
+    letter-spacing: -.03em; color: #fff; margin-bottom: 20px;
   }
-  .globe-dots span:nth-child(2) { animation-delay: .22s; }
-  .globe-dots span:nth-child(3) { animation-delay: .44s; }
-  @keyframes gdot { from { opacity: .2; transform: translateY(0); } to { opacity: 1; transform: translateY(-5px); } }
-  #globe-locating p { font-family: var(--mono); color: #888; font-size: .82rem; letter-spacing: .06em; }
-  #globe-found { opacity: 0; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: max-content; }
-  #globe-coords { font-family: var(--mono); font-size: .76rem; color: #aaa; letter-spacing: .05em; margin-bottom: 6px; }
-  #globe-city { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; letter-spacing: -.03em; color: #fff; }
+  #ql2 {
+    font-size: clamp(.95rem, 2vw, 1.35rem); font-weight: 400;
+    color: #888; margin-bottom: 28px; max-width: 540px;
+  }
+  #ql3 {
+    font-family: var(--mono); font-size: clamp(.9rem, 1.8vw, 1.15rem);
+    font-weight: 600; color: #fff; letter-spacing: .08em;
+    border-top: 1px solid #333; padding-top: 24px;
+  }
+  #globe-flash {
+    position: absolute; inset: 0; background: #fff;
+    opacity: 0; pointer-events: none; transition: opacity .18s ease;
+    z-index: 2;
+  }
   #globe-skip {
-    position: absolute; bottom: 28px; right: 28px;
-    font-family: var(--mono); font-size: .76rem; font-weight: 500;
-    color: #666; border: 1px solid #333; background: rgba(0,0,0,.6);
-    padding: 8px 15px; border-radius: 9px; cursor: pointer;
+    position: absolute; bottom: 28px; right: 28px; z-index: 3;
+    font-family: var(--mono); font-size: .74rem; font-weight: 500;
+    color: #555; border: 1px solid #333; background: rgba(0,0,0,.7);
+    padding: 7px 14px; border-radius: 8px; cursor: pointer;
     transition: color .15s, border-color .15s;
   }
-  #globe-skip:hover { color: #fff; border-color: #888; }
+  #globe-skip:hover { color: #fff; border-color: #777; }
 </style>
 </head>
 <body>
@@ -300,15 +311,11 @@
   <!-- globe intro -->
   <div id="globe-intro">
     <div id="globe-canvas-wrap"></div>
-    <div id="globe-hud">
-      <div id="globe-locating">
-        <div class="globe-dots"><span></span><span></span><span></span></div>
-        <p>Locating...</p>
-      </div>
-      <div id="globe-found">
-        <div id="globe-coords">24.6282° S &middot; 25.9231° E</div>
-        <div id="globe-city">Gaborone, Botswana</div>
-      </div>
+    <div id="globe-flash"></div>
+    <div id="quote-screen">
+      <div class="qline" id="ql1">Technology is rewriting the world.</div>
+      <div class="qline" id="ql2">Africa is not watching from the sidelines.</div>
+      <div class="qline" id="ql3">POSITION YOURSELF TO BUILD &mdash; AND PROFIT.</div>
     </div>
     <button id="globe-skip">Skip intro</button>
   </div>
@@ -589,77 +596,94 @@
         Math.cos(LAT) * Math.sin(LON)
       ).normalize();
 
-      // Marker dot
-      const markerMesh = new THREE.Mesh(
-        new THREE.SphereGeometry(0.07, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0xffffff })
-      );
-      markerMesh.position.copy(gaboDir.clone().multiplyScalar(2.08));
-      markerMesh.visible = false;
-      globeGroup.add(markerMesh);
+      // Quote reveal helper
+      function showQuoteScreen() {
+        const wrap = document.getElementById('globe-canvas-wrap');
+        const flash = document.getElementById('globe-flash');
+        const qs = document.getElementById('quote-screen');
+        // fade out globe
+        wrap.style.opacity = '0';
+        // brief white flash
+        setTimeout(() => {
+          flash.style.transition = 'opacity .18s ease';
+          flash.style.opacity = '1';
+          setTimeout(() => {
+            flash.style.transition = 'opacity .35s ease';
+            flash.style.opacity = '0';
+            qs.classList.add('show');
+            // stagger lines
+            ['ql1','ql2','ql3'].forEach((id, i) => {
+              setTimeout(() => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('in');
+              }, 300 + i * 800);
+            });
+            // after lines settle, exit to portfolio
+            setTimeout(() => { phase = 'exit'; phaseT = 0; }, 300 + 3 * 800 + 2200);
+          }, 220);
+        }, 600);
+      }
 
-      // Three expanding pulse rings
-      const pulseRings = [0, 1, 2].map(i => {
-        const mesh = new THREE.Mesh(
-          new THREE.RingGeometry(0.07, 0.105, 32),
-          new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0 })
-        );
-        const p = gaboDir.clone().multiplyScalar(2.08);
-        mesh.position.copy(p);
-        mesh.lookAt(p.clone().multiplyScalar(3));
-        mesh.visible = false;
-        globeGroup.add(mesh);
-        return mesh;
-      });
-
-      // Industry label sprites
+      // Industry label sprites — compact, auto-width, 3x resolution for sharpness
       const LABELS = ['AI / ML', 'Networks', 'Embedded', 'IoT', 'Communications', 'Telecommunications'];
       function makeSprite(text) {
-        const W = 384, H = 80, rx = 16;
+        const DPR = 3;
+        const FONT_PX = 11;   // logical px — small and clean
+        const H_LOG = 22;     // logical height
+        const DOT_X = 9, TEXT_X = 17, PAD_R = 11;
+
+        // measure text at render resolution
+        const probe = document.createElement('canvas').getContext('2d');
+        probe.font = `500 ${FONT_PX * DPR}px Inter, system-ui, sans-serif`;
+        const textW = probe.measureText(text).width / DPR;
+
+        const W_LOG = TEXT_X + textW + PAD_R;
         const cv = document.createElement('canvas');
-        cv.width = W; cv.height = H;
+        cv.width  = Math.ceil(W_LOG * DPR);
+        cv.height = Math.ceil(H_LOG * DPR);
         const ctx = cv.getContext('2d');
+        ctx.scale(DPR, DPR);
 
-        // outer glow
-        ctx.shadowColor = 'rgba(255,255,255,0.35)';
-        ctx.shadowBlur = 14;
-
-        // background pill
-        ctx.fillStyle = 'rgba(12,12,12,0.82)';
+        // pill background
+        const rx = 5;
+        ctx.fillStyle = 'rgba(8,8,8,0.72)';
         ctx.beginPath();
-        ctx.moveTo(rx, 0); ctx.lineTo(W - rx, 0);
-        ctx.arcTo(W, 0, W, rx, rx);
-        ctx.lineTo(W, H - rx);
-        ctx.arcTo(W, H, W - rx, H, rx);
-        ctx.lineTo(rx, H);
-        ctx.arcTo(0, H, 0, H - rx, rx);
+        ctx.moveTo(rx, 0); ctx.lineTo(W_LOG - rx, 0);
+        ctx.arcTo(W_LOG, 0, W_LOG, rx, rx);
+        ctx.lineTo(W_LOG, H_LOG - rx);
+        ctx.arcTo(W_LOG, H_LOG, W_LOG - rx, H_LOG, rx);
+        ctx.lineTo(rx, H_LOG);
+        ctx.arcTo(0, H_LOG, 0, H_LOG - rx, rx);
         ctx.lineTo(0, rx);
         ctx.arcTo(0, 0, rx, 0, rx);
         ctx.closePath();
         ctx.fill();
 
-        // border
-        ctx.shadowBlur = 0;
-        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
-        ctx.lineWidth = 1.5;
+        // border — thin, subtle
+        ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+        ctx.lineWidth = 0.6;
         ctx.stroke();
 
-        // left accent bar
-        ctx.fillStyle = '#fff';
+        // small dot
+        ctx.fillStyle = 'rgba(255,255,255,0.85)';
         ctx.beginPath();
-        ctx.roundRect(14, H * 0.25, 3, H * 0.5, 2);
+        ctx.arc(DOT_X, H_LOG / 2, 2, 0, Math.PI * 2);
         ctx.fill();
 
-        // label text
+        // text — no shadow (causes blur), white
+        ctx.font = `500 ${FONT_PX}px Inter, system-ui, sans-serif`;
         ctx.fillStyle = '#ffffff';
-        ctx.font = '500 22px Inter, system-ui, sans-serif';
         ctx.textBaseline = 'middle';
         ctx.textAlign = 'left';
-        ctx.fillText(text, 28, H / 2);
+        ctx.fillText(text, TEXT_X, H_LOG / 2);
 
-        const mat = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cv), transparent: true });
+        const tex = new THREE.CanvasTexture(cv);
+        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        const mat = new THREE.SpriteMaterial({ map: tex, transparent: true, depthWrite: false });
         const sprite = new THREE.Sprite(mat);
-        sprite.scale.set(2.6, 0.54, 1);
+        const aspect = W_LOG / H_LOG;
+        const baseH = 0.22;
+        sprite.scale.set(aspect * baseH, baseH, 1);
         return { sprite, mat };
       }
 
@@ -672,11 +696,12 @@
         return { sprite, mat, angle, R, yOff };
       });
 
-      // Quaternion to rotate globeGroup so Gaborone faces camera (+Z)
+      // Quaternion to rotate globeGroup so Botswana/Southern Africa faces camera (+Z)
       const targetQuat = new THREE.Quaternion().setFromUnitVectors(gaboDir, new THREE.Vector3(0, 0, 1));
 
-      // Phase machine: spin -> zoom -> pin -> exit
+      // Phases: spin -> zoom -> quote -> exit
       let phase = 'spin', phaseT = 0, lastTs = performance.now();
+      let quoteLaunched = false;
 
       function easeIO(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
 
@@ -697,36 +722,15 @@
         } else if (phase === 'zoom') {
           const t = Math.min(phaseT / 5.0, 1);
           const e = easeIO(t);
-
-          // Slerp globe so Gaborone faces camera
           globeGroup.quaternion.slerp(targetQuat, dt * 0.9);
-
-          // Zoom camera in
-          camera.position.z = 6.8 + (3.0 - 6.8) * e;
-
-          // Fade orbiters and orbit ring out
+          camera.position.z = 6.8 + (2.6 - 6.8) * e;
           orbiters.forEach(o => { o.mat.opacity = Math.max(0, 1 - t * 2.0); });
           orbitPath.material.opacity = Math.max(0, 0.10 * (1 - t * 1.6));
-
-          if (t >= 1) {
-            phase = 'pin'; phaseT = 0;
-            markerMesh.visible = true;
-            pulseRings.forEach(r => { r.visible = true; });
-            // Swap HUD text
-            const loc = document.getElementById('globe-locating');
-            const fnd = document.getElementById('globe-found');
-            if (loc) { loc.style.transition = 'opacity .35s'; loc.style.opacity = '0'; }
-            if (fnd) { fnd.style.transition = 'opacity .55s .15s'; fnd.style.opacity = '1'; }
+          if (t >= 1 && !quoteLaunched) {
+            quoteLaunched = true;
+            phase = 'quote'; phaseT = 0;
+            showQuoteScreen();
           }
-
-        } else if (phase === 'pin') {
-          pulseRings.forEach((r, i) => {
-            const cycle = (phaseT * 0.6 + i * 0.38) % 1;
-            const s = 1 + cycle * 4;
-            r.scale.set(s, s, s);
-            r.material.opacity = (1 - cycle) * 0.55;
-          });
-          if (phaseT >= 3.5) { phase = 'exit'; phaseT = 0; }
 
         } else if (phase === 'exit') {
           const t = Math.min(phaseT / 1.6, 1);
