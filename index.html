@@ -34,6 +34,7 @@
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    overflow-x: hidden;
   }
 
   .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
@@ -68,7 +69,7 @@
   @media (max-width: 640px){ .nav-available { display: none; } }
 
   /* HERO */
-  header { padding: 96px 0 64px; border-bottom: 1px solid var(--line-2); position: relative; }
+  header { padding: 96px 0 64px; border-bottom: 1px solid var(--line-2); position: relative; overflow-x: clip; }
   header::before {
     content: ""; position: absolute; inset: 0; z-index: -1;
     background-image: linear-gradient(var(--line-2) 1px, transparent 1px), linear-gradient(90deg, var(--line-2) 1px, transparent 1px);
@@ -78,10 +79,11 @@
     opacity: 0.6;
   }
   .status {
-    display: inline-flex; align-items: center; gap: 8px;
+    display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap;
     font-family: var(--mono); font-size: 0.78rem; font-weight: 500;
     color: var(--accent-ink); background: var(--accent-soft);
     border: 1px solid #dbe6ff; padding: 6px 13px; border-radius: 999px; margin-bottom: 24px;
+    max-width: 100%;
   }
   .status .dot { width: 7px; height: 7px; border-radius: 50%; background: #16a34a; box-shadow: 0 0 0 3px rgba(22,163,74,0.15); }
 
@@ -89,7 +91,11 @@
   h1 .accent { color: var(--accent); }
 
   /* --- hero animated mine text --- */
-  .anim-host { display: inline-block; vertical-align: baseline; position: relative; }
+  .anim-host {
+    display: inline-block; vertical-align: baseline;
+    position: relative; max-width: 100%;
+    overflow: visible;
+  }
   .anim-letter {
     display: inline-block;
     color: transparent;
@@ -113,6 +119,11 @@
   }
   .hero-fish.flip svg { transform: scaleX(-1); }
   .hero-fish svg { transition: transform .2s ease; }
+  @media (max-width: 640px) {
+    .anim-host { display: block; }
+    .hero-fish { display: none; }
+    .anim-letter { -webkit-text-stroke: 1px var(--ink); }
+  }
   .lede { font-size: clamp(1.02rem, 2vw, 1.22rem); color: var(--ink-2); max-width: 620px; margin-bottom: 32px; }
 
   .cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
