@@ -76,6 +76,32 @@
 
   h1 { font-size: clamp(2.3rem, 6vw, 4.1rem); line-height: 1.05; font-weight: 800; letter-spacing: -0.035em; margin-bottom: 20px; }
   h1 .accent { color: var(--accent); }
+
+  /* --- hero animated mine text --- */
+  .anim-host { display: inline-block; vertical-align: baseline; position: relative; }
+  .anim-letter {
+    display: inline-block;
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--ink);
+    transition: transform .6s cubic-bezier(.4,0,.2,1), opacity .5s ease;
+    will-change: transform, opacity;
+  }
+  .anim-letter.fallen {
+    opacity: 0;
+    transform: translateY(var(--fy, 80px)) rotate(var(--rot, 20deg)) scale(.8) !important;
+  }
+  @keyframes fishSwim {
+    0%,100% { transform: translateY(0px); }
+    50%      { transform: translateY(-4px); }
+  }
+  .hero-fish {
+    position: absolute; bottom: -22px; left: 0;
+    color: var(--ink); pointer-events: none;
+    animation: fishSwim .7s ease-in-out infinite;
+    transition: left .11s linear;
+  }
+  .hero-fish.flip svg { transform: scaleX(-1); }
+  .hero-fish svg { transition: transform .2s ease; }
   .lede { font-size: clamp(1.02rem, 2vw, 1.22rem); color: var(--ink-2); max-width: 620px; margin-bottom: 32px; }
 
   .cta-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
@@ -173,7 +199,7 @@
   @keyframes drift { from { transform: translate(-2.5%, 0) scale(1); } to { transform: translate(2.5%, 2%) scale(1.06); } }
 
   /* animated gradient shimmer on accent words */
-  h1 .accent, .contact h2 .accent {
+  .contact h2 .accent {
     background: linear-gradient(100deg, #2563eb 0%, #06b6d4 50%, #2563eb 100%);
     background-size: 220% 100%;
     -webkit-background-clip: text; background-clip: text; color: transparent;
@@ -335,7 +361,7 @@
   <header>
     <div class="wrap">
       <div class="status"><span class="dot"></span> Open to full-time engineering roles</div>
-      <h1>Computer &amp; Telecom Engineer<br />building <span class="accent">intelligent systems.</span></h1>
+      <h1>Computer &amp; Telecom Engineer<br />building <span class="anim-host" id="heroAnimHost"></span></h1>
       <p class="lede">
         I work across <strong>AI &amp; reinforcement learning</strong>, <strong>embedded hardware</strong>,
         and <strong>communication networks</strong>, turning hard engineering problems into systems that run.
@@ -988,6 +1014,77 @@
     $('modalDismiss').addEventListener('click', closeModal);
     modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
+    // --- hero mine animation ---
+    (function () {
+      const host = document.getElementById('heroAnimHost');
+      if (!host) return;
+
+      const TEXT = 'intelligent systems.';
+
+      // Build letter spans
+      TEXT.split('').forEach(ch => {
+        const s = document.createElement('span');
+        s.className = 'anim-letter';
+        s.textContent = ch === ' ' ? ' ' : ch;
+        const dir = Math.random() < 0.5 ? 1 : -1;
+        s.style.setProperty('--rot', (dir * (18 + Math.random() * 38)) + 'deg');
+        s.style.setProperty('--fy',  (65 + Math.random() * 55) + 'px');
+        host.appendChild(s);
+      });
+
+      // Fish character
+      const fish = document.createElement('span');
+      fish.className = 'hero-fish';
+      fish.innerHTML = `<svg width="28" height="19" viewBox="0 0 28 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 9.5C4 9.5 0 6.5 0 3L5 9.5L0 16C0 12.5 4 9.5 4 9.5Z" fill="currentColor" opacity="0.7"/>
+        <ellipse cx="14.5" cy="9.5" rx="10" ry="6" fill="currentColor"/>
+        <circle cx="21.5" cy="8" r="1.6" fill="white"/>
+        <circle cx="22" cy="8" r="0.75" fill="#1a1a1a"/>
+        <path d="M12 4.5 Q16 1.8 21 4.5" stroke="white" stroke-width="1.1" fill="none" stroke-linecap="round" opacity="0.4"/>
+        <path d="M8 13 Q12 16 16 13" stroke="white" stroke-width="0.8" fill="none" stroke-linecap="round" opacity="0.25"/>
+      </svg>`;
+      host.appendChild(fish);
+
+      const letters = [...host.querySelectorAll('.anim-letter')];
+
+      function fishAt(idx) {
+        const el = letters[Math.max(0, Math.min(idx, letters.length - 1))];
+        fish.style.left = (el.offsetLeft - 6) + 'px';
+      }
+
+      function doFall() {
+        fish.classList.remove('flip');
+        letters.forEach((el, i) => {
+          setTimeout(() => {
+            fishAt(i);
+            // quick shake then fall
+            el.animate([
+              { transform: 'translate(0,0) rotate(0deg)' },
+              { transform: 'translate(-2px,-1px) rotate(-5deg)' },
+              { transform: 'translate(2px,1px) rotate(5deg)' },
+              { transform: 'translate(0,0) rotate(0deg)' }
+            ], { duration: 180, easing: 'ease-in-out' })
+            .onfinish = () => el.classList.add('fallen');
+          }, i * 170);
+        });
+        setTimeout(doBuild, letters.length * 170 + 500);
+      }
+
+      function doBuild() {
+        fish.classList.add('flip');
+        [...letters].reverse().forEach((el, i) => {
+          setTimeout(() => {
+            fishAt(letters.indexOf(el));
+            el.classList.remove('fallen');
+          }, i * 130);
+        });
+        setTimeout(doFall, letters.length * 130 + 1500);
+      }
+
+      // kick off after a short delay so page has settled
+      setTimeout(doFall, 2200);
+    })();
   </script>
 </body>
 </html>
