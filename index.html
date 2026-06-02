@@ -255,9 +255,63 @@
     *, *::before, *::after { animation: none !important; transition-duration: .01ms !important; }
     .reveal { opacity: 1; transform: none; }
   }
+
+  /* ---- globe intro overlay ---- */
+  #globe-intro {
+    position: fixed; inset: 0; z-index: 9999;
+    background: #fff; overflow: hidden;
+    display: flex; align-items: center; justify-content: center;
+  }
+  #globe-canvas-wrap { position: absolute; inset: 0; }
+  #globe-canvas-wrap canvas { display: block; }
+  #globe-hud {
+    position: absolute; bottom: 12%; left: 50%;
+    transform: translateX(-50%); text-align: center;
+    pointer-events: none; min-width: 240px;
+  }
+  #globe-locating {
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    transition: opacity .4s ease;
+  }
+  .globe-dots { display: flex; gap: 8px; }
+  .globe-dots span {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+    animation: gdot .85s ease-in-out infinite alternate;
+  }
+  .globe-dots span:nth-child(2) { animation-delay: .22s; }
+  .globe-dots span:nth-child(3) { animation-delay: .44s; }
+  @keyframes gdot { from { opacity: .2; transform: translateY(0); } to { opacity: 1; transform: translateY(-5px); } }
+  #globe-locating p { font-family: var(--mono); color: var(--muted); font-size: .82rem; letter-spacing: .06em; }
+  #globe-found { opacity: 0; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: max-content; }
+  #globe-coords { font-family: var(--mono); font-size: .76rem; color: var(--accent); letter-spacing: .05em; margin-bottom: 6px; }
+  #globe-city { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; letter-spacing: -.03em; color: var(--ink); }
+  #globe-skip {
+    position: absolute; bottom: 28px; right: 28px;
+    font-family: var(--mono); font-size: .76rem; font-weight: 500;
+    color: var(--muted); border: 1px solid var(--line); background: rgba(255,255,255,.8);
+    padding: 8px 15px; border-radius: 9px; cursor: pointer;
+    transition: color .15s, border-color .15s;
+  }
+  #globe-skip:hover { color: var(--accent); border-color: var(--accent); }
 </style>
 </head>
 <body>
+
+  <!-- globe intro -->
+  <div id="globe-intro">
+    <div id="globe-canvas-wrap"></div>
+    <div id="globe-hud">
+      <div id="globe-locating">
+        <div class="globe-dots"><span></span><span></span><span></span></div>
+        <p>Locating...</p>
+      </div>
+      <div id="globe-found">
+        <div id="globe-coords">24.6282° S &middot; 25.9231° E</div>
+        <div id="globe-city">Gaborone, Botswana</div>
+      </div>
+    </div>
+    <button id="globe-skip">Skip intro</button>
+  </div>
 
   <nav>
     <div class="wrap">
@@ -463,6 +517,221 @@
       </div>
     </div>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js" defer></script>
+  <script>
+  (function() {
+    function waitForThree(cb) {
+      if (typeof THREE !== 'undefined') { cb(); return; }
+      setTimeout(() => waitForThree(cb), 30);
+    }
+
+    const intro = document.getElementById('globe-intro');
+    if (!intro) return;
+
+    waitForThree(function() {
+      const W = window.innerWidth, H = window.innerHeight;
+      const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setSize(W, H);
+      document.getElementById('globe-canvas-wrap').appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
+      camera.position.set(0, 0, 6.8);
+
+      // Lighting
+      scene.add(new THREE.AmbientLight(0xffffff, 2.2));
+      const sun = new THREE.DirectionalLight(0x3b82f6, 1.8);
+      sun.position.set(5, 3, 5);
+      scene.add(sun);
+
+      // Globe group (rotates to face Gaborone)
+      const globeGroup = new THREE.Group();
+      scene.add(globeGroup);
+
+      // Wireframe lat-lon sphere
+      globeGroup.add(new THREE.Mesh(
+        new THREE.SphereGeometry(2, 36, 18),
+        new THREE.MeshBasicMaterial({ color: 0x2563eb, wireframe: true, transparent: true, opacity: 0.18 })
+      ));
+
+      // Solid inner sphere
+      globeGroup.add(new THREE.Mesh(
+        new THREE.SphereGeometry(1.985, 64, 32),
+        new THREE.MeshPhongMaterial({ color: 0xdbeafe, transparent: true, opacity: 0.72, shininess: 70 })
+      ));
+
+      // Equator ring
+      const eqRing = new THREE.Mesh(
+        new THREE.TorusGeometry(2.005, 0.006, 8, 128),
+        new THREE.MeshBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.45 })
+      );
+      globeGroup.add(eqRing);
+
+      // Orbit path ring (labels travel on this)
+      const orbitPath = new THREE.Mesh(
+        new THREE.TorusGeometry(3.5, 0.004, 8, 128),
+        new THREE.MeshBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.12 })
+      );
+      orbitPath.rotation.x = Math.PI / 6;
+      scene.add(orbitPath);
+
+      // Gaborone coords on unit sphere
+      const LAT = -24.6282 * Math.PI / 180;
+      const LON =  25.9231 * Math.PI / 180;
+      const gaboDir = new THREE.Vector3(
+        Math.cos(LAT) * Math.cos(LON),
+        Math.sin(LAT),
+        Math.cos(LAT) * Math.sin(LON)
+      ).normalize();
+
+      // Marker dot
+      const markerMesh = new THREE.Mesh(
+        new THREE.SphereGeometry(0.07, 16, 16),
+        new THREE.MeshBasicMaterial({ color: 0xe11d48 })
+      );
+      markerMesh.position.copy(gaboDir.clone().multiplyScalar(2.08));
+      markerMesh.visible = false;
+      globeGroup.add(markerMesh);
+
+      // Three expanding pulse rings
+      const pulseRings = [0, 1, 2].map(i => {
+        const mesh = new THREE.Mesh(
+          new THREE.RingGeometry(0.07, 0.105, 32),
+          new THREE.MeshBasicMaterial({ color: 0xe11d48, side: THREE.DoubleSide, transparent: true, opacity: 0 })
+        );
+        const p = gaboDir.clone().multiplyScalar(2.08);
+        mesh.position.copy(p);
+        mesh.lookAt(p.clone().multiplyScalar(3));
+        mesh.visible = false;
+        globeGroup.add(mesh);
+        return mesh;
+      });
+
+      // Industry label sprites
+      const LABELS = ['AI / ML', 'Networks', 'Embedded', 'IoT', 'Communications'];
+      function makeSprite(text) {
+        const cv = document.createElement('canvas');
+        cv.width = 256; cv.height = 64;
+        const ctx = cv.getContext('2d');
+        const rx = 14;
+        ctx.fillStyle = '#2563eb';
+        ctx.beginPath();
+        ctx.moveTo(rx, 0); ctx.lineTo(256 - rx, 0);
+        ctx.arcTo(256, 0, 256, rx, rx);
+        ctx.lineTo(256, 64 - rx);
+        ctx.arcTo(256, 64, 256 - rx, 64, rx);
+        ctx.lineTo(rx, 64);
+        ctx.arcTo(0, 64, 0, 64 - rx, rx);
+        ctx.lineTo(0, rx);
+        ctx.arcTo(0, 0, rx, 0, rx);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#fff';
+        ctx.font = 'bold 23px Inter, system-ui, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(text, 128, 32);
+        const mat = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cv), transparent: true });
+        const sprite = new THREE.Sprite(mat);
+        sprite.scale.set(1.9, 0.48, 1);
+        return { sprite, mat };
+      }
+
+      const orbiters = LABELS.map((lbl, i) => {
+        const { sprite, mat } = makeSprite(lbl);
+        const angle = (i / LABELS.length) * Math.PI * 2;
+        const R = 3.5, yOff = i % 2 === 0 ? 0.55 : -0.55;
+        sprite.position.set(Math.cos(angle) * R, yOff, Math.sin(angle) * R);
+        scene.add(sprite);
+        return { sprite, mat, angle, R, yOff };
+      });
+
+      // Quaternion to rotate globeGroup so Gaborone faces camera (+Z)
+      const targetQuat = new THREE.Quaternion().setFromUnitVectors(gaboDir, new THREE.Vector3(0, 0, 1));
+
+      // Phase machine: spin -> zoom -> pin -> exit
+      let phase = 'spin', phaseT = 0, lastTs = performance.now();
+
+      function easeIO(t) { return t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2; }
+
+      function tick(ts) {
+        requestAnimationFrame(tick);
+        const dt = Math.min((ts - lastTs) / 1000, 0.05);
+        lastTs = ts;
+        phaseT += dt;
+
+        if (phase === 'spin') {
+          globeGroup.rotation.y += dt * 0.55;
+          orbiters.forEach(o => {
+            o.angle += dt * 0.28;
+            o.sprite.position.set(Math.cos(o.angle) * o.R, o.yOff, Math.sin(o.angle) * o.R);
+          });
+          if (phaseT >= 2.4) { phase = 'zoom'; phaseT = 0; }
+
+        } else if (phase === 'zoom') {
+          const t = Math.min(phaseT / 2.8, 1);
+          const e = easeIO(t);
+
+          // Slerp globe so Gaborone faces camera
+          globeGroup.quaternion.slerp(targetQuat, dt * 2.0);
+
+          // Zoom camera in
+          camera.position.z = 6.8 + (3.0 - 6.8) * e;
+
+          // Fade orbiters and orbit ring out
+          orbiters.forEach(o => { o.mat.opacity = Math.max(0, 1 - t * 2.2); });
+          orbitPath.material.opacity = Math.max(0, 0.12 * (1 - t * 1.8));
+
+          if (t >= 1) {
+            phase = 'pin'; phaseT = 0;
+            markerMesh.visible = true;
+            pulseRings.forEach(r => { r.visible = true; });
+            // Swap HUD text
+            const loc = document.getElementById('globe-locating');
+            const fnd = document.getElementById('globe-found');
+            if (loc) { loc.style.transition = 'opacity .35s'; loc.style.opacity = '0'; }
+            if (fnd) { fnd.style.transition = 'opacity .55s .15s'; fnd.style.opacity = '1'; }
+          }
+
+        } else if (phase === 'pin') {
+          pulseRings.forEach((r, i) => {
+            const cycle = (phaseT * 1.1 + i * 0.38) % 1;
+            const s = 1 + cycle * 4;
+            r.scale.set(s, s, s);
+            r.material.opacity = (1 - cycle) * 0.55;
+          });
+          if (phaseT >= 2.0) { phase = 'exit'; phaseT = 0; }
+
+        } else if (phase === 'exit') {
+          const t = Math.min(phaseT / 1.0, 1);
+          intro.style.opacity = String(1 - t);
+          if (t >= 1) { intro.style.display = 'none'; return; }
+        }
+
+        renderer.render(scene, camera);
+      }
+
+      requestAnimationFrame(tick);
+
+      // Skip button
+      document.getElementById('globe-skip').addEventListener('click', () => {
+        intro.style.transition = 'opacity .45s';
+        intro.style.opacity = '0';
+        setTimeout(() => { intro.style.display = 'none'; }, 460);
+      });
+
+      // Resize
+      window.addEventListener('resize', () => {
+        const W = window.innerWidth, H = window.innerHeight;
+        camera.aspect = W / H;
+        camera.updateProjectionMatrix();
+        renderer.setSize(W, H);
+      });
+    });
+  })();
+  </script>
 
   <script>
     document.getElementById('yr').textContent = new Date().getFullYear();
