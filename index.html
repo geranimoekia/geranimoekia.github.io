@@ -913,13 +913,20 @@
         return { sprite, mat };
       }
 
+      // Labels scroll upward — fixed x/z position around the globe, y drifts top to bottom
+      const SCROLL_RANGE = isMobile ? 6.5 : 5.2;
       const orbiters = LABELS.map((lbl, i) => {
         const { sprite, mat } = makeSprite(lbl);
         const angle = (i / LABELS.length) * Math.PI * 2;
-        const R = isMobile ? 5.2 : 3.8, yOff = i % 2 === 0 ? (isMobile ? 1.0 : 0.65) : (isMobile ? -1.0 : -0.65);
-        sprite.position.set(Math.cos(angle) * R, yOff, Math.sin(angle) * R);
+        const R = isMobile ? 4.6 : 3.6;
+        const x = Math.cos(angle) * R;
+        const z = Math.sin(angle) * R;
+        // stagger starting y so they don't all appear at once
+        const startY = -SCROLL_RANGE + (i / LABELS.length) * SCROLL_RANGE * 2;
+        sprite.position.set(x, startY, z);
+        mat.opacity = 0;
         scene.add(sprite);
-        return { sprite, mat, angle, R, yOff };
+        return { sprite, mat, x, z, y: startY };
       });
 
       // Quaternion to rotate globeGroup so Botswana/Southern Africa faces camera (+Z)
@@ -939,9 +946,16 @@
 
         if (phase === 'spin') {
           globeGroup.rotation.y += dt * 0.18;
+          const SPEED = 0.65, FADE = 1.4;
           orbiters.forEach(o => {
-            o.angle += dt * 0.10;
-            o.sprite.position.set(Math.cos(o.angle) * o.R, o.yOff, Math.sin(o.angle) * o.R);
+            o.y += dt * SPEED;
+            if (o.y > SCROLL_RANGE) o.y -= SCROLL_RANGE * 2;
+            o.sprite.position.y = o.y;
+            // fade in near bottom, full in middle, fade out near top
+            let op = 1;
+            if (o.y < -SCROLL_RANGE + FADE) op = Math.max(0, (o.y + SCROLL_RANGE) / FADE);
+            else if (o.y > SCROLL_RANGE - FADE) op = Math.max(0, (SCROLL_RANGE - o.y) / FADE);
+            o.mat.opacity = op;
           });
           if (phaseT >= 5.0) { phase = 'zoom'; phaseT = 0; }
 
@@ -952,7 +966,7 @@
           const startZ = isMobile ? 9.5 : 6.8;
           const endZ = isMobile ? 4.5 : 2.6;
           camera.position.z = startZ + (endZ - startZ) * e;
-          orbiters.forEach(o => { o.mat.opacity = Math.max(0, 1 - t * 2.0); });
+          orbiters.forEach(o => { o.mat.opacity = Math.max(0, o.mat.opacity - dt * 1.2); });
           orbitPath.material.opacity = Math.max(0, 0.10 * (1 - t * 1.6));
           if (t >= 1 && !quoteLaunched) {
             quoteLaunched = true;
