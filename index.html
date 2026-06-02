@@ -390,8 +390,6 @@
     .footer-main { grid-template-columns: 1fr; gap: 32px; padding: 40px 0 36px; }
     .footer-col ul { gap: 12px; }
 
-    /* --- globe intro on mobile: no canvas, just quote --- */
-    #globe-canvas-wrap { display: none; }
     #globe-skip { bottom: 16px; right: 16px; }
   }
 
@@ -763,43 +761,18 @@
     const intro = document.getElementById('globe-intro');
     if (!intro) return;
 
-    // On mobile skip Three.js entirely — go straight to the quote
-    if (window.innerWidth <= 768) {
-      let qt = 0;
-      function mobileQuote() {
-        const qs = document.getElementById('quote-screen');
-        if (qs) qs.classList.add('show');
-        ['ql1','ql2','ql3'].forEach((id, i) => {
-          setTimeout(() => {
-            const el = document.getElementById(id);
-            if (el) el.classList.add('in');
-          }, 400 + i * 750);
-        });
-        setTimeout(() => {
-          intro.style.transition = 'opacity 1.2s ease';
-          intro.style.opacity = '0';
-          setTimeout(() => { intro.style.display = 'none'; }, 1200);
-        }, 400 + 3 * 750 + 1800);
-      }
-      setTimeout(mobileQuote, 300);
-      document.getElementById('globe-skip').addEventListener('click', () => {
-        intro.style.transition = 'opacity .4s';
-        intro.style.opacity = '0';
-        setTimeout(() => { intro.style.display = 'none'; }, 400);
-      });
-      return;
-    }
+    const isMobile = window.innerWidth <= 768;
 
     waitForThree(function() {
       const W = window.innerWidth, H = window.innerHeight;
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.5 : 2));
       renderer.setSize(W, H);
       document.getElementById('globe-canvas-wrap').appendChild(renderer.domElement);
 
       const scene = new THREE.Scene();
       const camera = new THREE.PerspectiveCamera(45, W / H, 0.1, 100);
-      camera.position.set(0, 0, 6.8);
+      camera.position.set(0, 0, isMobile ? 5.5 : 6.8);
 
       // Lighting
       scene.add(new THREE.AmbientLight(0xffffff, 1.2));
@@ -816,26 +789,26 @@
 
       // Wireframe lat-lon sphere
       globeGroup.add(new THREE.Mesh(
-        new THREE.SphereGeometry(2, 36, 18),
+        new THREE.SphereGeometry(2, isMobile ? 24 : 36, isMobile ? 12 : 18),
         new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.22 })
       ));
 
       // Solid inner sphere — dark with bright rim from light
       globeGroup.add(new THREE.Mesh(
-        new THREE.SphereGeometry(1.985, 64, 32),
+        new THREE.SphereGeometry(1.985, isMobile ? 32 : 64, isMobile ? 16 : 32),
         new THREE.MeshPhongMaterial({ color: 0x1a1a1a, emissive: 0x111111, transparent: true, opacity: 0.92, shininess: 120, specular: 0xffffff })
       ));
 
       // Equator ring
       const eqRing = new THREE.Mesh(
-        new THREE.TorusGeometry(2.005, 0.006, 8, 128),
+        new THREE.TorusGeometry(2.005, 0.006, 8, isMobile ? 64 : 128),
         new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35 })
       );
       globeGroup.add(eqRing);
 
       // Orbit path ring (labels travel on this)
       const orbitPath = new THREE.Mesh(
-        new THREE.TorusGeometry(3.5, 0.004, 8, 128),
+        new THREE.TorusGeometry(3.5, 0.004, 8, isMobile ? 64 : 128),
         new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.10 })
       );
       orbitPath.rotation.x = Math.PI / 6;
@@ -977,7 +950,9 @@
           const t = Math.min(phaseT / 5.0, 1);
           const e = easeIO(t);
           globeGroup.quaternion.slerp(targetQuat, dt * 0.9);
-          camera.position.z = 6.8 + (2.6 - 6.8) * e;
+          const startZ = isMobile ? 5.5 : 6.8;
+          const endZ = isMobile ? 2.2 : 2.6;
+          camera.position.z = startZ + (endZ - startZ) * e;
           orbiters.forEach(o => { o.mat.opacity = Math.max(0, 1 - t * 2.0); });
           orbitPath.material.opacity = Math.max(0, 0.10 * (1 - t * 1.6));
           if (t >= 1 && !quoteLaunched) {
