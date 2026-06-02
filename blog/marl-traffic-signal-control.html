@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Teaching Traffic Lights to Think | Tsotlhe Seiphepi</title>
+<meta name="description" content="How Multi-Agent PPO with CTDE architecture was used to control three coupled traffic intersections on the Palapye A1 corridor." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #ffffff; --bg-soft: #f7f8fa; --ink: #0b0f17; --ink-2: #364152;
+    --muted: #697586; --line: #e6e8ec; --line-2: #eef0f3;
+    --accent: #2563eb; --accent-soft: #eff4ff; --accent-ink: #1d4ed8;
+    --mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.6; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
+
+  /* nav */
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,0.85); backdrop-filter: blur(10px); border-bottom: 1px solid var(--line); }
+  nav .wrap { display: flex; align-items: center; justify-content: space-between; height: 62px; }
+  .logo { font-weight: 700; font-size: 1rem; display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ink); }
+  .brand-svg { height: 26px; width: auto; color: var(--ink); display: block; }
+  .logo-name { font-size: 0.82rem; font-weight: 600; color: var(--muted); }
+  .nav-links { display: flex; gap: 28px; align-items: center; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.92rem; font-weight: 500; transition: color .15s; }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-cta { background: var(--ink); color: #fff !important; padding: 8px 16px; border-radius: 9px; font-size: 0.88rem; }
+  .nav-cta:hover { background: var(--accent) !important; }
+  @media (max-width: 640px) { .nav-links a:not(.nav-cta) { display: none; } }
+
+  /* post layout */
+  .post-wrap { max-width: 720px; margin: 0 auto; padding: 0 24px; }
+
+  .post-header { padding: 64px 0 48px; border-bottom: 1px solid var(--line-2); }
+  .back-link { display: inline-flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: 0.78rem; color: var(--muted); text-decoration: none; margin-bottom: 28px; transition: color .15s; }
+  .back-link:hover { color: var(--accent); }
+  .post-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+  .post-tag { font-family: var(--mono); font-size: 0.72rem; padding: 4px 10px; border-radius: 6px; background: var(--accent-soft); color: var(--accent-ink); }
+  .post-header h1 { font-size: clamp(1.8rem, 4.5vw, 2.8rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; margin-bottom: 18px; }
+  .post-meta-row { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; color: var(--muted); font-size: 0.85rem; }
+  .post-meta-row .author { font-weight: 600; color: var(--ink-2); }
+  .dot-sep { color: var(--line); }
+
+  /* body */
+  .post-body { padding: 48px 0 80px; }
+  .post-body p { font-size: 1.05rem; line-height: 1.78; color: var(--ink-2); margin-bottom: 22px; }
+  .post-body h2 { font-size: 1.45rem; font-weight: 800; letter-spacing: -0.02em; color: var(--ink); margin: 48px 0 14px; }
+  .post-body h3 { font-size: 1.1rem; font-weight: 700; color: var(--ink); margin: 32px 0 10px; }
+  .post-body strong { color: var(--ink); font-weight: 600; }
+  .post-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+  .post-body ul, .post-body ol { padding-left: 22px; margin-bottom: 22px; }
+  .post-body li { font-size: 1.05rem; line-height: 1.75; color: var(--ink-2); margin-bottom: 6px; }
+  .post-body code { font-family: var(--mono); font-size: 0.88em; background: var(--bg-soft); border: 1px solid var(--line-2); padding: 2px 6px; border-radius: 5px; color: var(--ink); }
+
+  /* callout */
+  .callout { background: var(--accent-soft); border-left: 3px solid var(--accent); border-radius: 0 10px 10px 0; padding: 16px 20px; margin: 28px 0; }
+  .callout p { margin: 0; color: var(--accent-ink); font-size: 0.97rem; }
+
+  /* figure */
+  figure { margin: 36px 0; }
+  figure img { width: 100%; border-radius: 12px; border: 1px solid var(--line-2); display: block; background: var(--bg-soft); }
+  figcaption { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); margin-top: 10px; text-align: center; }
+
+  /* two-up images */
+  .img-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 36px 0; }
+  .img-grid figure { margin: 0; }
+  @media (max-width: 600px) { .img-grid { grid-template-columns: 1fr; } }
+
+  /* divider */
+  .post-divider { border: none; border-top: 1px solid var(--line-2); margin: 48px 0; }
+
+  /* post footer nav */
+  .post-nav { display: flex; justify-content: space-between; align-items: center; padding: 32px 0 64px; flex-wrap: wrap; gap: 12px; }
+  .post-nav a { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; font-size: 0.92rem; text-decoration: none; color: var(--ink); transition: color .15s; }
+  .post-nav a:hover { color: var(--accent); }
+
+  /* site footer */
+  footer { background: var(--ink); color: rgba(255,255,255,0.5); font-size: 0.85rem; padding: 28px 0; text-align: center; }
+  footer a { color: rgba(255,255,255,0.5); text-decoration: none; }
+  footer a:hover { color: #fff; }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="../index.html" class="logo">
+      <svg class="brand-svg" viewBox="0 0 116 44" fill="none" aria-label="Σ.K.iΛ">
+        <polyline points="22,4 5,4 13.5,22 5,40 22,40" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="30" cy="38" r="2.3" fill="currentColor"/>
+        <line x1="38" y1="4" x2="38" y2="40" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <line x1="38" y1="22" x2="52" y2="4" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <line x1="38" y1="22" x2="52" y2="40" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <circle cx="60" cy="38" r="2.3" fill="currentColor"/>
+        <line x1="70" y1="15" x2="70" y2="40" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/>
+        <circle cx="70" cy="7" r="2.6" fill="currentColor"/>
+        <polyline points="83,40 95,4 107,40" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-name">Tsotlhe Seiphepi</span>
+    </a>
+    <div class="nav-links">
+      <a href="../index.html#projects">Projects</a>
+      <a href="index.html">Writing</a>
+      <a href="../index.html#contact" class="nav-cta">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<div class="post-wrap">
+
+  <header class="post-header">
+    <a class="back-link" href="index.html">← Writing</a>
+    <div class="post-tags">
+      <span class="post-tag">AI / Reinforcement Learning</span>
+      <span class="post-tag">Python</span>
+      <span class="post-tag">SUMO</span>
+    </div>
+    <h1>Teaching Traffic Lights to Think: Multi-Agent RL on the Palapye A1 Corridor</h1>
+    <div class="post-meta-row">
+      <span class="author">Tsotlhe Seiphepi</span>
+      <span class="dot-sep">·</span>
+      <span>June 2025</span>
+      <span class="dot-sep">·</span>
+      <span>8 min read</span>
+    </div>
+  </header>
+
+  <article class="post-body">
+
+    <p>
+      Traffic congestion in growing African cities is not just an inconvenience. It wastes fuel, delays emergency vehicles, reduces productivity, and contributes to emissions. Palapye, a fast-developing town in central Botswana along the A1 corridor, has a triple-intersection network that sees significant daily traffic load. Traditional fixed-time signal controllers have no awareness of real-time conditions. They run the same cycle whether the road is empty or gridlocked.
+    </p>
+
+    <p>
+      This project explored a different approach: training a team of autonomous agents using Multi-Agent Deep Reinforcement Learning to control all three intersections simultaneously, learning from experience how to reduce congestion across the entire network rather than at any single junction.
+    </p>
+
+    <h2>Why Multi-Agent, and Why PPO</h2>
+
+    <p>
+      Single-agent RL approaches to traffic signal control treat each intersection independently. An agent controls one junction, optimising its own metrics without accounting for what happens downstream. If intersection A clears a queue rapidly, it may flood intersection B before B is ready. The intersections are coupled, so treating them independently produces suboptimal results at best and new bottlenecks at worst.
+    </p>
+
+    <p>
+      Multi-agent reinforcement learning lets multiple agents control multiple intersections while sharing information during training. The approach used here, <strong>MAPPO (Multi-Agent Proximal Policy Optimisation)</strong>, combines the stability and sample efficiency of PPO with a cooperative multi-agent framework.
+    </p>
+
+    <div class="callout">
+      <p><strong>MAPPO</strong> is an extension of PPO to the multi-agent setting. Each agent maintains its own policy but is trained using a centralised value function that has access to the global state. At execution time, each agent acts using only its local observations, which makes the system deployable without a central communication hub.</p>
+    </div>
+
+    <h2>The Architecture: CTDE</h2>
+
+    <p>
+      The system follows a <strong>Centralised Training, Decentralised Execution (CTDE)</strong> architecture. During training, a central critic observes the full state of the network — queue lengths, waiting times, and phase information at all three intersections simultaneously. This allows each agent's policy to be informed by what other agents are doing, enabling cooperative behaviour to emerge.
+    </p>
+
+    <p>
+      At deployment, each agent only sees its own local observations: the queue length on each approach, the current phase, and time elapsed in the current phase. No inter-agent communication is required at runtime. This is critical for real-world viability — the system does not depend on a reliable network link between junction controllers.
+    </p>
+
+    <p>
+      The three agents each control one intersection on the Palapye A1 triple-junction network, with the following local state space per agent:
+    </p>
+
+    <ul>
+      <li>Queue length on each approach lane</li>
+      <li>Current signal phase (one-hot encoded)</li>
+      <li>Time elapsed in the current phase</li>
+      <li>Waiting time for vehicles at the front of each queue</li>
+    </ul>
+
+    <h2>Simulation Environment: SUMO</h2>
+
+    <p>
+      All training and evaluation ran inside <strong>SUMO (Simulation of Urban MObility)</strong>, an open-source microscopic traffic simulator. SUMO models individual vehicles, their interactions, and their responses to signal states. The Palapye triple-intersection network was built inside SUMO with realistic lane configurations and demand patterns.
+    </p>
+
+    <p>
+      The Python interface to SUMO, <code>traci</code>, allowed the RL agents to observe the simulation state at each time step and issue phase change commands. Each training episode simulated a period of traffic demand, and agents accumulated rewards based on the network-level performance metrics.
+    </p>
+
+    <h2>Curriculum Learning for Stable Training</h2>
+
+    <p>
+      Training a team of agents to coordinate from scratch on a complex multi-intersection environment is unstable. Agents initially produce random behaviour, which causes the simulated network to seize up completely. Sparse reward signals make it difficult for the agents to learn any useful policy before training diverges.
+    </p>
+
+    <p>
+      The solution was <strong>curriculum learning</strong>: starting with a simplified version of the problem and gradually increasing complexity as the agents improved. Early episodes used low traffic demand and gave agents larger reward signals for any reduction in queue lengths. As training progressed, demand increased, the reward shaping became more sparse, and the full complexity of coordinating all three intersections was introduced.
+    </p>
+
+    <p>
+      This staged approach produced significantly more stable learning curves and allowed the agents to build on basic signal timing intuitions before facing the full coordination challenge.
+    </p>
+
+    <h2>Reward Design</h2>
+
+    <p>
+      Each agent receives a reward signal based on a weighted combination of metrics at its intersection. The central critic aggregates these across all three agents to compute a global value estimate. The reward components were:
+    </p>
+
+    <ul>
+      <li><strong>Queue length:</strong> negative reward proportional to total vehicles waiting</li>
+      <li><strong>Waiting time:</strong> negative reward for vehicles with high accumulated delay</li>
+      <li><strong>Throughput:</strong> positive reward for vehicles exiting the intersection</li>
+      <li><strong>Pressure:</strong> negative reward for imbalance between incoming and outgoing flow</li>
+    </ul>
+
+    <p>
+      Balancing these components required iteration. Overweighting throughput alone caused agents to switch phases aggressively, which increased wear on the signal hardware and created uncomfortable stop-start patterns for drivers.
+    </p>
+
+    <h2>Training Results</h2>
+
+    <figure>
+      <img src="https://raw.githubusercontent.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor/main/SPPO_model/results/ppo_dashboard_blue_20251121_220824.png" alt="PPO training dashboard showing reward curves and metric evolution" loading="lazy" />
+      <figcaption>Full training dashboard showing reward evolution, policy loss, and key traffic metrics over training episodes.</figcaption>
+    </figure>
+
+    <p>
+      The training dashboard above shows the agents improving over time across all tracked metrics. Reward climbs steadily through the curriculum phases, with a noticeable jump when curriculum difficulty increases and the agents successfully adapt rather than regress.
+    </p>
+
+    <div class="img-grid">
+      <figure>
+        <img src="https://raw.githubusercontent.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor/main/SPPO_model/results/queue_lengths.png" alt="Queue length over training" loading="lazy" />
+        <figcaption>Queue lengths across all intersections during training.</figcaption>
+      </figure>
+      <figure>
+        <img src="https://raw.githubusercontent.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor/main/SPPO_model/results/comparison_20251121_213355.png" alt="Comparison between MARL and baseline" loading="lazy" />
+        <figcaption>MARL agents vs. fixed-time baseline controller comparison.</figcaption>
+      </figure>
+    </div>
+
+    <p>
+      Compared to a fixed-time baseline controller, the trained MARL agents produced meaningful reductions in average queue length and vehicle waiting time across the network. The agents also demonstrated adaptive behaviour in response to demand fluctuations, holding green phases longer during high-demand periods and releasing phases quickly when queues were short.
+    </p>
+
+    <h2>What Did Not Work (and What It Taught Me)</h2>
+
+    <p>
+      The first several training runs diverged entirely. Agents learned to hold a single phase indefinitely, which drained queues on one approach while completely blocking all others. This is a classic failure mode in traffic RL and pointed to a reward shaping problem — the agents were finding local optima that scored well on one metric but were catastrophic globally.
+    </p>
+
+    <p>
+      Adding the pressure component to the reward function resolved this. Pressure penalises the difference between the number of vehicles arriving at an intersection and the number leaving, which forces agents to consider the downstream impact of their decisions.
+    </p>
+
+    <p>
+      The other major lesson was about the importance of the CTDE structure specifically. An early experiment with fully independent agents (no centralised critic) produced agents that learned reasonable individual policies but actively interfered with each other at the network level. Introducing the shared critic was the intervention that made coordination emerge.
+    </p>
+
+    <h2>Limitations and Where This Goes Next</h2>
+
+    <p>
+      The current work is simulation-only. SUMO is a high-fidelity simulator but it is still a model of the real world, not the real world itself. Real deployment would require integration with physical signal controllers, sensor infrastructure to feed real-time state observations, and extensive safety validation before any live testing.
+    </p>
+
+    <p>
+      The demand patterns used in training were based on estimates rather than measured traffic counts from Palapye. Getting real vehicle count data from the Botswana Road Transport Department would allow for much more realistic and useful training scenarios.
+    </p>
+
+    <p>
+      Extensions worth exploring include: incorporating pedestrian phases, handling incident scenarios where a lane is blocked, and extending the architecture to the full A1 corridor rather than just the triple-intersection section.
+    </p>
+
+    <hr class="post-divider" />
+
+    <p>
+      The full code, trained models, and results are available on <a href="https://github.com/geranimoekia/Multi-Agent-Deep-Reinforcement-Learning-for-Adaptive-Traffic-Signal-Control-Palapye-A1-Corridor" target="_blank" rel="noopener">GitHub</a>. If you are working on traffic signal control, smart city infrastructure, or reinforcement learning applications in African urban environments, I would be glad to connect.
+    </p>
+
+    <div class="post-nav">
+      <a href="index.html">← All posts</a>
+      <a href="../index.html#projects">View all projects →</a>
+    </div>
+
+  </article>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p>© <span id="yr"></span> Tsotlhe Seiphepi · <a href="../index.html">Portfolio</a> · <a href="index.html">Writing</a></p>
+  </div>
+</footer>
+<script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
