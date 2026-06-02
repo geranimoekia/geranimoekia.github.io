@@ -613,42 +613,60 @@
       });
 
       // Industry label sprites
-      const LABELS = ['AI / ML', 'Networks', 'Embedded', 'IoT', 'Communications'];
+      const LABELS = ['AI / ML', 'Networks', 'Embedded', 'IoT', 'Communications', 'Telecommunications'];
       function makeSprite(text) {
+        const W = 384, H = 80, rx = 16;
         const cv = document.createElement('canvas');
-        cv.width = 256; cv.height = 64;
+        cv.width = W; cv.height = H;
         const ctx = cv.getContext('2d');
-        const rx = 14;
-        ctx.fillStyle = 'rgba(255,255,255,0.12)';
-        ctx.strokeStyle = 'rgba(255,255,255,0.55)';
-        ctx.lineWidth = 2;
+
+        // outer glow
+        ctx.shadowColor = 'rgba(255,255,255,0.35)';
+        ctx.shadowBlur = 14;
+
+        // background pill
+        ctx.fillStyle = 'rgba(12,12,12,0.82)';
         ctx.beginPath();
-        ctx.moveTo(rx, 0); ctx.lineTo(256 - rx, 0);
-        ctx.arcTo(256, 0, 256, rx, rx);
-        ctx.lineTo(256, 64 - rx);
-        ctx.arcTo(256, 64, 256 - rx, 64, rx);
-        ctx.lineTo(rx, 64);
-        ctx.arcTo(0, 64, 0, 64 - rx, rx);
+        ctx.moveTo(rx, 0); ctx.lineTo(W - rx, 0);
+        ctx.arcTo(W, 0, W, rx, rx);
+        ctx.lineTo(W, H - rx);
+        ctx.arcTo(W, H, W - rx, H, rx);
+        ctx.lineTo(rx, H);
+        ctx.arcTo(0, H, 0, H - rx, rx);
         ctx.lineTo(0, rx);
         ctx.arcTo(0, 0, rx, 0, rx);
         ctx.closePath();
         ctx.fill();
+
+        // border
+        ctx.shadowBlur = 0;
+        ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+        ctx.lineWidth = 1.5;
         ctx.stroke();
+
+        // left accent bar
         ctx.fillStyle = '#fff';
-        ctx.font = 'bold 23px Inter, system-ui, sans-serif';
-        ctx.textAlign = 'center';
+        ctx.beginPath();
+        ctx.roundRect(14, H * 0.25, 3, H * 0.5, 2);
+        ctx.fill();
+
+        // label text
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '500 22px Inter, system-ui, sans-serif';
         ctx.textBaseline = 'middle';
-        ctx.fillText(text, 128, 32);
+        ctx.textAlign = 'left';
+        ctx.fillText(text, 28, H / 2);
+
         const mat = new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(cv), transparent: true });
         const sprite = new THREE.Sprite(mat);
-        sprite.scale.set(1.9, 0.48, 1);
+        sprite.scale.set(2.6, 0.54, 1);
         return { sprite, mat };
       }
 
       const orbiters = LABELS.map((lbl, i) => {
         const { sprite, mat } = makeSprite(lbl);
         const angle = (i / LABELS.length) * Math.PI * 2;
-        const R = 3.5, yOff = i % 2 === 0 ? 0.55 : -0.55;
+        const R = 3.8, yOff = i % 2 === 0 ? 0.65 : -0.65;
         sprite.position.set(Math.cos(angle) * R, yOff, Math.sin(angle) * R);
         scene.add(sprite);
         return { sprite, mat, angle, R, yOff };
@@ -669,26 +687,26 @@
         phaseT += dt;
 
         if (phase === 'spin') {
-          globeGroup.rotation.y += dt * 0.55;
+          globeGroup.rotation.y += dt * 0.18;
           orbiters.forEach(o => {
-            o.angle += dt * 0.28;
+            o.angle += dt * 0.10;
             o.sprite.position.set(Math.cos(o.angle) * o.R, o.yOff, Math.sin(o.angle) * o.R);
           });
-          if (phaseT >= 2.4) { phase = 'zoom'; phaseT = 0; }
+          if (phaseT >= 5.0) { phase = 'zoom'; phaseT = 0; }
 
         } else if (phase === 'zoom') {
-          const t = Math.min(phaseT / 2.8, 1);
+          const t = Math.min(phaseT / 5.0, 1);
           const e = easeIO(t);
 
           // Slerp globe so Gaborone faces camera
-          globeGroup.quaternion.slerp(targetQuat, dt * 2.0);
+          globeGroup.quaternion.slerp(targetQuat, dt * 0.9);
 
           // Zoom camera in
           camera.position.z = 6.8 + (3.0 - 6.8) * e;
 
           // Fade orbiters and orbit ring out
-          orbiters.forEach(o => { o.mat.opacity = Math.max(0, 1 - t * 2.2); });
-          orbitPath.material.opacity = Math.max(0, 0.12 * (1 - t * 1.8));
+          orbiters.forEach(o => { o.mat.opacity = Math.max(0, 1 - t * 2.0); });
+          orbitPath.material.opacity = Math.max(0, 0.10 * (1 - t * 1.6));
 
           if (t >= 1) {
             phase = 'pin'; phaseT = 0;
@@ -703,15 +721,15 @@
 
         } else if (phase === 'pin') {
           pulseRings.forEach((r, i) => {
-            const cycle = (phaseT * 1.1 + i * 0.38) % 1;
+            const cycle = (phaseT * 0.6 + i * 0.38) % 1;
             const s = 1 + cycle * 4;
             r.scale.set(s, s, s);
             r.material.opacity = (1 - cycle) * 0.55;
           });
-          if (phaseT >= 2.0) { phase = 'exit'; phaseT = 0; }
+          if (phaseT >= 3.5) { phase = 'exit'; phaseT = 0; }
 
         } else if (phase === 'exit') {
-          const t = Math.min(phaseT / 1.0, 1);
+          const t = Math.min(phaseT / 1.6, 1);
           intro.style.opacity = String(1 - t);
           if (t >= 1) { intro.style.display = 'none'; return; }
         }
