@@ -259,7 +259,7 @@
   /* ---- globe intro overlay ---- */
   #globe-intro {
     position: fixed; inset: 0; z-index: 9999;
-    background: #fff; overflow: hidden;
+    background: #0a0a0a; overflow: hidden;
     display: flex; align-items: center; justify-content: center;
   }
   #globe-canvas-wrap { position: absolute; inset: 0; }
@@ -275,24 +275,24 @@
   }
   .globe-dots { display: flex; gap: 8px; }
   .globe-dots span {
-    width: 8px; height: 8px; border-radius: 50%; background: var(--accent);
+    width: 8px; height: 8px; border-radius: 50%; background: #fff;
     animation: gdot .85s ease-in-out infinite alternate;
   }
   .globe-dots span:nth-child(2) { animation-delay: .22s; }
   .globe-dots span:nth-child(3) { animation-delay: .44s; }
   @keyframes gdot { from { opacity: .2; transform: translateY(0); } to { opacity: 1; transform: translateY(-5px); } }
-  #globe-locating p { font-family: var(--mono); color: var(--muted); font-size: .82rem; letter-spacing: .06em; }
+  #globe-locating p { font-family: var(--mono); color: #888; font-size: .82rem; letter-spacing: .06em; }
   #globe-found { opacity: 0; position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: max-content; }
-  #globe-coords { font-family: var(--mono); font-size: .76rem; color: var(--accent); letter-spacing: .05em; margin-bottom: 6px; }
-  #globe-city { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; letter-spacing: -.03em; color: var(--ink); }
+  #globe-coords { font-family: var(--mono); font-size: .76rem; color: #aaa; letter-spacing: .05em; margin-bottom: 6px; }
+  #globe-city { font-size: clamp(1.4rem, 3vw, 2rem); font-weight: 800; letter-spacing: -.03em; color: #fff; }
   #globe-skip {
     position: absolute; bottom: 28px; right: 28px;
     font-family: var(--mono); font-size: .76rem; font-weight: 500;
-    color: var(--muted); border: 1px solid var(--line); background: rgba(255,255,255,.8);
+    color: #666; border: 1px solid #333; background: rgba(0,0,0,.6);
     padding: 8px 15px; border-radius: 9px; cursor: pointer;
     transition: color .15s, border-color .15s;
   }
-  #globe-skip:hover { color: var(--accent); border-color: var(--accent); }
+  #globe-skip:hover { color: #fff; border-color: #888; }
 </style>
 </head>
 <body>
@@ -541,10 +541,13 @@
       camera.position.set(0, 0, 6.8);
 
       // Lighting
-      scene.add(new THREE.AmbientLight(0xffffff, 2.2));
-      const sun = new THREE.DirectionalLight(0x3b82f6, 1.8);
+      scene.add(new THREE.AmbientLight(0xffffff, 1.2));
+      const sun = new THREE.DirectionalLight(0xffffff, 2.5);
       sun.position.set(5, 3, 5);
       scene.add(sun);
+      const fill = new THREE.DirectionalLight(0xffffff, 0.4);
+      fill.position.set(-5, -2, -3);
+      scene.add(fill);
 
       // Globe group (rotates to face Gaborone)
       const globeGroup = new THREE.Group();
@@ -553,26 +556,26 @@
       // Wireframe lat-lon sphere
       globeGroup.add(new THREE.Mesh(
         new THREE.SphereGeometry(2, 36, 18),
-        new THREE.MeshBasicMaterial({ color: 0x2563eb, wireframe: true, transparent: true, opacity: 0.18 })
+        new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true, transparent: true, opacity: 0.22 })
       ));
 
-      // Solid inner sphere
+      // Solid inner sphere — dark with bright rim from light
       globeGroup.add(new THREE.Mesh(
         new THREE.SphereGeometry(1.985, 64, 32),
-        new THREE.MeshPhongMaterial({ color: 0xdbeafe, transparent: true, opacity: 0.72, shininess: 70 })
+        new THREE.MeshPhongMaterial({ color: 0x1a1a1a, emissive: 0x111111, transparent: true, opacity: 0.92, shininess: 120, specular: 0xffffff })
       ));
 
       // Equator ring
       const eqRing = new THREE.Mesh(
         new THREE.TorusGeometry(2.005, 0.006, 8, 128),
-        new THREE.MeshBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.45 })
+        new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.35 })
       );
       globeGroup.add(eqRing);
 
       // Orbit path ring (labels travel on this)
       const orbitPath = new THREE.Mesh(
         new THREE.TorusGeometry(3.5, 0.004, 8, 128),
-        new THREE.MeshBasicMaterial({ color: 0x2563eb, transparent: true, opacity: 0.12 })
+        new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.10 })
       );
       orbitPath.rotation.x = Math.PI / 6;
       scene.add(orbitPath);
@@ -589,7 +592,7 @@
       // Marker dot
       const markerMesh = new THREE.Mesh(
         new THREE.SphereGeometry(0.07, 16, 16),
-        new THREE.MeshBasicMaterial({ color: 0xe11d48 })
+        new THREE.MeshBasicMaterial({ color: 0xffffff })
       );
       markerMesh.position.copy(gaboDir.clone().multiplyScalar(2.08));
       markerMesh.visible = false;
@@ -599,7 +602,7 @@
       const pulseRings = [0, 1, 2].map(i => {
         const mesh = new THREE.Mesh(
           new THREE.RingGeometry(0.07, 0.105, 32),
-          new THREE.MeshBasicMaterial({ color: 0xe11d48, side: THREE.DoubleSide, transparent: true, opacity: 0 })
+          new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide, transparent: true, opacity: 0 })
         );
         const p = gaboDir.clone().multiplyScalar(2.08);
         mesh.position.copy(p);
@@ -616,7 +619,9 @@
         cv.width = 256; cv.height = 64;
         const ctx = cv.getContext('2d');
         const rx = 14;
-        ctx.fillStyle = '#2563eb';
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+        ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(rx, 0); ctx.lineTo(256 - rx, 0);
         ctx.arcTo(256, 0, 256, rx, rx);
@@ -628,6 +633,7 @@
         ctx.arcTo(0, 0, rx, 0, rx);
         ctx.closePath();
         ctx.fill();
+        ctx.stroke();
         ctx.fillStyle = '#fff';
         ctx.font = 'bold 23px Inter, system-ui, sans-serif';
         ctx.textAlign = 'center';
